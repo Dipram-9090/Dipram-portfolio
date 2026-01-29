@@ -43,6 +43,7 @@ const ServicesPreview = () => {
 
       <div id="flowing-menu">
         <FlowingMenu
+          link="/services"
           items={demoItems}
           speed={20}
           textColor="#ffffff"
