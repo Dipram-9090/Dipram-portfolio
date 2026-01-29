@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useLenis } from "lenis/react";
+// Import Context safely
 import { useTransition } from "../context/TransitionContext";
 
 const AnimatedLink = ({ to, children, className, onClick, ...props }) => {
@@ -7,41 +8,28 @@ const AnimatedLink = ({ to, children, className, onClick, ...props }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { triggerExit } = useTransition();
+  // SAFEGUARD: Check if context exists before destructuring
+  const transitionContext = useTransition();
+  const triggerExit = transitionContext ? transitionContext.triggerExit : null;
 
   const handleNavClick = (e) => {
-    e.preventDefault(); // Stop default anchor behavior
+    e.preventDefault();
 
-    // --- LOGIC: PREVENT SAME-PAGE ANIMATION ---
     const cleanPath = (p) => p.replace(/\/+$/, "") || "/";
+    if (cleanPath(location.pathname) === cleanPath(to)) return;
 
-    // Compare current location vs target path
-    if (cleanPath(location.pathname) === cleanPath(to)) {
-      console.log("Navigation prevented: Already on this path.");
-      return;
-    }
-
-    // Define the actual navigation function
     const performNavigation = () => {
-      if (lenis) {
-        lenis.scrollTo(0, { immediate: true, force: true });
-      }
-
-      navigate(to, {
-        state: { resetAnimation: Date.now() },
-      });
+      if (lenis) lenis.scrollTo(0, { immediate: true, force: true });
+      navigate(to, { state: { resetAnimation: Date.now() } });
     };
 
-    // --- CHECK FOR EXIT ANIMATION ---
+    // Only run exit animation if the function actually exists
     if (triggerExit) {
-      triggerExit(() => {
-        performNavigation();
-      });
+      triggerExit(() => performNavigation());
     } else {
       performNavigation();
     }
 
-    // Execute any additional onClick handlers passed via props
     if (onClick) onClick(e);
   };
 
