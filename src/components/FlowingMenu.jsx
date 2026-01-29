@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState } from "react";
 import { gsap } from "gsap";
+import AnimatedLink from "./animatedLink/AnimatedLink";
 
 function FlowingMenu({
   items = [],
@@ -146,7 +147,7 @@ function MenuItem({
       className="flex-1 relative overflow-hidden text-center"
       style={{ borderTop: isFirst ? "none" : `1px solid ${borderColor}` }}
     >
-      <a
+      <AnimatedLink
         href={link}
         onMouseEnter={onEnter}
         onMouseLeave={onLeave}
@@ -154,7 +155,7 @@ function MenuItem({
         style={{ color: textColor }}
       >
         {text}
-      </a>
+      </AnimatedLink>
 
       <div
         ref={marqueeRef}
