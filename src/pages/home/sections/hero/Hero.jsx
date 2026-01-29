@@ -6,7 +6,7 @@ import ContactButton from "../../../../components/ContactButton";
 const Hero = () => {
   return (
     <div className="hero-section relative overflow-hidden w-full min-h-screen lg:h-[115vh]">
-      <WavyGradient />
+      <WavyGradient noiseIntensity={4}  />
       
       {/* --- Profile Image --- */}
       <div className="absolute w-full h-full pointer-events-none">
