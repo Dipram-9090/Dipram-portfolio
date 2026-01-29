@@ -148,7 +148,7 @@ function MenuItem({
       style={{ borderTop: isFirst ? "none" : `1px solid ${borderColor}` }}
     >
       <AnimatedLink
-        href={link}
+        to={link}
         onMouseEnter={onEnter}
         onMouseLeave={onLeave}
         className={`flex items-center justify-center h-full uppercase cursor-pointer no-underline ${fontClass} ${textSize}`}
