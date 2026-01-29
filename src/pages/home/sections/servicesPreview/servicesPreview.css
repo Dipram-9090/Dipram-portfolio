@@ -1,0 +1,25 @@
+#flowing-menu {
+  position: relative;
+  mix-blend-mode: difference;
+  
+  /* Mobile First Defaults */
+  height: 30vh;
+  border-top: 1px solid #FFF;
+  border-bottom: 1px solid #FFF;
+}
+
+/* Tablet (md equivalent) */
+@media (min-width: 768px) {
+  #flowing-menu {
+    height: 40vh;
+    border-top: 1.5px solid #FFF;
+    border-bottom: 1.5px solid #FFF;
+  }
+}
+
+/* Desktop (lg equivalent) */
+@media (min-width: 1024px) {
+  #flowing-menu {
+    height: 50vh;
+  }
+}

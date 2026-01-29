@@ -1,0 +1,55 @@
+/* Hide default cursor globally */
+body {
+  cursor: none;
+}
+
+/* Base Cursor Style */
+.inverted-cursor {
+  width: 2.25rem;
+  height: 2.25rem;
+  background-color: none; /* MUST be white for inversion */
+  border-radius: 50%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 5000;
+  pointer-events: none; /* Allows clicks to pass through */
+
+  /* Centers the cursor on the mouse coordinates */
+  transform: translate(-50%, -50%);
+
+  /* Smooth transition for size changes */
+  transition:
+    transform 0.2s ease,
+    width 0.2s ease,
+    height 0.2s ease;
+}
+
+.arrow-cursor {
+  opacity: 1;
+  transition:
+    transform 0.2s ease,
+    width 0.2s ease,
+    height 0.2s ease;
+}
+
+.arrow-cursor.hovering {
+  opacity: 0;
+}
+
+/* Hover State (When hovering links/buttons) */
+.inverted-cursor.hovering {
+  background-color: white;
+  mix-blend-mode: difference;
+  transform: translate(-50%, -50%) scale(2.5); /* Grows 3.5x larger */
+}
+
+/* Optional: Hide cursor on mobile devices */
+@media (hover: none) and (pointer: coarse) {
+  .inverted-cursor {
+    display: none;
+  }
+  body {
+    cursor: auto;
+  }
+}

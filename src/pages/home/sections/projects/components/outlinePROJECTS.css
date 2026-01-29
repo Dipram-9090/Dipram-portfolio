@@ -1,0 +1,19 @@
+.text-outline-black {
+  color: transparent;
+  /* Mobile: Thinner stroke so text doesn't blur together */
+  -webkit-text-stroke: 1px white;
+}
+
+/* Tablet and larger: Increase stroke width */
+@media (min-width: 768px) {
+  .text-outline-black {
+    -webkit-text-stroke: 1.5px white;
+  }
+}
+
+/* Desktop: Your original thickness */
+@media (min-width: 1024px) {
+  .text-outline-black {
+    -webkit-text-stroke: 2px white;
+  }
+}

@@ -1,0 +1,128 @@
+@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap");
+
+/* =========================
+   EUCLID CIRCULAR B
+========================= */
+@font-face {
+  font-family: "Euclid Circular B";
+  src: url("/fonts/Euclid-Circular-B-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Euclid Circular B";
+  src: url("/fonts/Euclid-Circular-B-Light-Italic.ttf") format("truetype");
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Euclid Circular B";
+  src: url("/fonts/Euclid-Circular-B-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Euclid Circular B";
+  src: url("/fonts/Euclid-Circular-B-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Euclid Circular B";
+  src: url("/fonts/Euclid-Circular-B-Medium-Italic.ttf") format("truetype");
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Euclid Circular B";
+  src: url("/fonts/Euclid-Circular-B-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Euclid Circular B";
+  src: url("/fonts/Euclid-Circular-B-SemiBold-Italic.ttf") format("truetype");
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Euclid Circular B";
+  src: url("/fonts/Euclid-Circular-B-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Euclid Circular B";
+  src: url("/fonts/Euclid-Circular-B-Bold-Italic.ttf") format("truetype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@layer utilities {
+  .font-euclid {
+    font-family: "Euclid Circular B", sans-serif;
+  }
+
+  .font-bebas {
+    font-family: "Bebas Neue", sans-serif;
+  }
+}
+html {
+  /* ❌ BAD for Lenis (Causes the "stuck" bounce) */
+  /* height: 100%; */
+  /* scroll-behavior: smooth; */
+
+  /* ✅ GOOD for Lenis */
+  height: auto;
+  min-height: 100%;
+  scroll-behavior: auto; /* Let Lenis handle the smoothness */
+}
+
+body {
+  min-height: 100vh;
+}
+
+/* Hide scrollbar for Chrome, Edge, Safari */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for Firefox */
+* {
+  scrollbar-width: none;
+}
+
+/* Hide scrollbar for IE/Edge legacy */
+body {
+  -ms-overflow-style: none;
+}
+
+body {
+  background-color: #131313;
+}
+
+
+
+
+::selection {
+  background: #19E6B6;
+  color: #131313;
+}
