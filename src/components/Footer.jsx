@@ -31,9 +31,12 @@ const Footer = () => {
           <div className="flex flex-col gap-3">
             <h4 className="font-bebas font-medium text-2xl">Follow Me</h4>
             <div className="flex gap-3">
-              <LinkedInIcon color="black" width={30} height={30} />
-              <BehanceIcon color="black" width={30} height={30} />
-              {/* <TwitterIcon color="black" size={50} /> */}
+              <a href="https://www.linkedin.com/in/dipram-biswas" target="blank">
+                <LinkedInIcon color="black" width={30} height={30} />
+              </a>
+              <a href="https://www.behance.net/diprambiswas9090" target="blank">
+                <BehanceIcon color="black" width={30} height={30} />
+              </a>
             </div>
           </div>
         </div>
