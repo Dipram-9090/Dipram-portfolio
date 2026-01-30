@@ -186,17 +186,17 @@ const BurgerMenu = () => {
                   <div className="overflow-hidden">
                     <motion.div variants={mobileLinkVars}>
                       {/* Applied closeMenu */}
-                      <button onClick={closeMenu}>
+                      <a href="https://www.behance.net/diprambiswas9090" target="blank" onClick={closeMenu}>
                         <BehanceIcon width={50} height={50} />
-                      </button>
+                      </a>
                     </motion.div>
                   </div>
                   <div className="overflow-hidden">
                     <motion.div variants={mobileLinkVars}>
                       {/* Applied closeMenu */}
-                      <button onClick={closeMenu}>
+                      <a href="https://www.linkedin.com/in/dipram-biswas" target="blank" onClick={closeMenu}>
                         <LinkedInIcon width={50} height={50} />
-                      </button>
+                      </a>
                     </motion.div>
                   </div>
                 </div>
