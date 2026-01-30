@@ -98,7 +98,7 @@ const Home = () => {
       </div>
 
       {/* LogoSection */}
-      <div className="js-color-stop w-full overflow-hidden" data-background-color="rgb(19,19,19)">
+      <div className="js-color-stop w-full overflow-hidden hidden lg:block" data-background-color="rgb(19,19,19)">
         <LogoSection />
         <div className="flex justify-end w-full ">
           <MarqueeWhite />
