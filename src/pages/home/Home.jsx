@@ -90,15 +90,23 @@ const Home = () => {
       </div>
 
       {/* Logofolio */}
-      <div className="js-color-stop" data-background-color="rgb(255,255,255)">
+      <div className="w-full overflow-hidden">
       <Logofolio />
         <div className="flex justify-start w-full ">
           <MarqueeBlue />
         </div>
       </div>
 
+      {/* LogoSection */}
+      <div className="w-full overflow-hidden">
+        <LogoSection />
+        <div className="flex justify-end w-full ">
+          <MarqueeWhite />
+        </div>
+      </div>
+
       {/* LogoSectionSimpler */}
-      <div className="js-color-stop" data-background-color="rgb(255,255,255)">
+      <div className="w-full overflow-hidden">
         <LogoSectionSimpler />
         <div className="flex justify-end w-full ">
           <MarqueeWhite />
