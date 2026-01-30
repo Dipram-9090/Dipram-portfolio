@@ -90,7 +90,7 @@ const Home = () => {
       </div>
 
       {/* Logofolio */}
-      <div className="js-color-stop w-full overflow-hidden" data-background-color="rgb(19,19,19)">
+      <div className="w-full overflow-hidden">
       <Logofolio />
         <div className="flex justify-start w-full ">
           <MarqueeBlue />
