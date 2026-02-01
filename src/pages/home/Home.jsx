@@ -12,9 +12,8 @@ import { useLenis } from "lenis/react";
 import { useEffect } from "react";
 import Footer from "../../components/Footer";
 import Contact from "./sections/contact/Contact";
-import LogoSection from "./sections/logoSection/LogoSection";
 import LogoSectionSimpler from "./sections/logoSection/LogoSectionSimpler";
-import LogoSectionTrial from "./sections/logoSection/LogoSectionTrial";
+import LogoSectionDesktop from "./sections/logoSection/LogoSectionDestop";
 
 const Home = () => {
   const location = useLocation();
@@ -108,7 +107,7 @@ const Home = () => {
 
       {/* LogoSectionTrial */}
       <div className="w-full hidden lg:block">
-        <LogoSectionTrial />
+        <LogoSectionDesktop />
         <div className="flex justify-end w-full ">
           <MarqueeWhite />
         </div>

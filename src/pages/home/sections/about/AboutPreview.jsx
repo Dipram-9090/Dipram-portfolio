@@ -81,6 +81,7 @@ const AboutPreview = () => {
       <div className="flex flex-col gap-6 items-start lg:items-end justify-center">
         {/* Mobile: text-4xl, text-left | Large: text-6xl, text-right (Original) */}
         <h1 className="scrollAnimate text-white font-euclid font-medium text-4xl leading-tight md:text-5xl lg:text-6xl lg:leading-18 text-left lg:text-right">
+          Hi, I'm <span>Dipram</span>, <br />
           I’m a{" "}
           <span className="text-[#19E6B6]"> multidisciplinary designer </span>{" "}
           and focused on building{" "}

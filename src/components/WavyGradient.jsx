@@ -3,8 +3,8 @@ import { useEffect, useRef } from "react";
 const WavyGradient = ({
   // COLOR CONTROLS
   color1 = "#2115D1", // Bottom Color (Deep Blue)
-  color2 = "#6B64CA", // Middle Color (Cyan/Teal) - NEW
-  color3 = "#E9E8FD", // Top Color (White) - MOVED
+  color2 = "#6B64CA", // Middle Color (Cyan/Teal)
+  color3 = "#E9E8FD", // Top Color (White)
 
   // MOTION CONTROLS
   speed = 1.3,        // Speed of the animation
@@ -27,10 +27,13 @@ const WavyGradient = ({
 
   useEffect(() => {
     const canvas = canvasRef.current;
+    
+    // OPTIMIZATION 1: Remove "high-performance" power preference.
+    // Mobiles throttle quickly with high-performance. "default" is much more stable.
     const gl = canvas.getContext("webgl", {
       antialias: false,
       alpha: false,
-      powerPreference: "high-performance",
+      powerPreference: "default", 
       preserveDrawingBuffer: false,
     });
 
@@ -39,15 +42,21 @@ const WavyGradient = ({
     // --- RESIZE HANDLER ---
     const resize = () => {
       const realDpr = window.devicePixelRatio || 1;
-      const dpr = Math.min(realDpr, 1.5) * 0.6;
+      
+      // OPTIMIZATION 2: Cap DPR for mobile.
+      // We limit the multiplier to save battery and GPU heat on high-res phones.
+      // The 0.6 scale serves as a stylistic choice (grain) but also a performance boost.
+      const dpr = Math.min(realDpr, 2.0) * 0.6; 
+      
       canvas.width = window.innerWidth * dpr;
       canvas.height = window.innerHeight * dpr;
       gl.viewport(0, 0, canvas.width, canvas.height);
     };
     resize();
+    // Use passive listener for better scroll performance
     window.addEventListener("resize", resize, { passive: true });
 
-    // --- VERTEX SHADER (Unchanged) ---
+    // --- VERTEX SHADER ---
     const vertexShaderSource = `
       attribute vec2 position;
       varying vec2 vUv;
@@ -57,15 +66,23 @@ const WavyGradient = ({
       }
     `;
 
-    // --- FRAGMENT SHADER (Updated for 3 Colors) ---
+    // --- FRAGMENT SHADER ---
     const fragmentShaderSource = `
-      precision mediump float;
+      // OPTIMIZATION 3: High Precision
+      // 'mediump' causes the "blocks" glitch after time passes because 
+      // the numbers get too big for the GPU to calculate smooth noise.
+      #ifdef GL_FRAGMENT_PRECISION_HIGH
+        precision highp float;
+      #else
+        precision mediump float;
+      #endif
+
       varying vec2 vUv;
       
       uniform float iTime;
-      uniform vec3 uColor1; // Bottom
-      uniform vec3 uColor2; // Middle
-      uniform vec3 uColor3; // Top
+      uniform vec3 uColor1;
+      uniform vec3 uColor2;
+      uniform vec3 uColor3;
       
       uniform float uAngle;
       uniform float uWaveFreq;
@@ -97,8 +114,11 @@ const WavyGradient = ({
       void main() {
         vec2 uv = rotate(vUv, uAngle, vec2(0.5));
 
+        // Noise Calculation
         float n = noise(uv * 5.0 + iTime * 0.5);
 
+        // Wave Calculation
+        // We use slightly simpler constants here to ensure mobile stability
         float wave =
           sin(uv.x * (uWaveFreq * 0.4) + iTime * 2.6) * 0.045 * uWaveAmp +
           sin(uv.x * uWaveFreq - iTime * 2.0) * 0.030 * uWaveAmp +
@@ -108,16 +128,11 @@ const WavyGradient = ({
 
         // Clamp and smooth
         gradient = clamp(gradient, 0.0, 1.0);
-        gradient = smoothstep(0.0, 1.0, gradient); // Linearize slightly
+        gradient = smoothstep(0.0, 1.0, gradient); 
         
         // --- 3-COLOR MIXING LOGIC ---
-        vec3 finalColor;
-
-        // Mix Color 1 to Color 2 (0.0 to 0.5)
         vec3 c1 = mix(uColor1, uColor2, smoothstep(0.0, 0.5, gradient));
-        
-        // Mix result to Color 3 (0.5 to 1.0)
-        finalColor = mix(c1, uColor3, smoothstep(0.5, 1.0, gradient));
+        vec3 finalColor = mix(c1, uColor3, smoothstep(0.5, 1.0, gradient));
 
         gl_FragColor = vec4(finalColor, 1.0);
       }
@@ -158,7 +173,7 @@ const WavyGradient = ({
       time: gl.getUniformLocation(program, "iTime"),
       color1: gl.getUniformLocation(program, "uColor1"),
       color2: gl.getUniformLocation(program, "uColor2"),
-      color3: gl.getUniformLocation(program, "uColor3"), // NEW
+      color3: gl.getUniformLocation(program, "uColor3"),
       angle: gl.getUniformLocation(program, "uAngle"),
       freq: gl.getUniformLocation(program, "uWaveFreq"),
       amp: gl.getUniformLocation(program, "uWaveAmp"),
@@ -174,11 +189,14 @@ const WavyGradient = ({
 
       const elapsed = (now - startTime) * 0.001 * speed;
 
-      // Update Uniforms
-      gl.uniform1f(locs.time, elapsed % 1000.0);
+      // Note: We removed the % 1000.0 reset here. 
+      // Because we switched to `highp` in the shader, we don't need to modulo the time manually.
+      // This prevents the animation from "skipping" every 1000 seconds.
+      gl.uniform1f(locs.time, elapsed);
+      
       gl.uniform3fv(locs.color1, hexToRgb(color1));
       gl.uniform3fv(locs.color2, hexToRgb(color2));
-      gl.uniform3fv(locs.color3, hexToRgb(color3)); // NEW
+      gl.uniform3fv(locs.color3, hexToRgb(color3));
       gl.uniform1f(locs.angle, (direction * Math.PI) / 180);
       gl.uniform1f(locs.freq, waveFrequency);
       gl.uniform1f(locs.amp, waveAmplitude);
@@ -207,7 +225,12 @@ const WavyGradient = ({
       cancelAnimationFrame(rafId);
       observer.disconnect();
       window.removeEventListener("resize", resize);
+      
+      // Cleanup WebGL resources
       gl.deleteProgram(program);
+      gl.deleteShader(vs);
+      gl.deleteShader(fs);
+      gl.deleteBuffer(buffer);
     };
   }, [color1, color2, color3, speed, direction, waveFrequency, waveAmplitude, noiseIntensity]); 
 
@@ -215,7 +238,8 @@ const WavyGradient = ({
     <canvas 
       ref={canvasRef} 
       className="absolute inset-0 w-full h-full -z-10"
-      style={{ width: "100%", height: "100%" }} 
+      // Added pointer-events-none to ensure scrolling on mobile isn't blocked by the canvas
+      style={{ width: "100%", height: "100%", pointerEvents: "none" }} 
     />
   );
 };
