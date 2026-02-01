@@ -15,9 +15,11 @@ gsap.registerPlugin(ScrollTrigger);
 const LogoSectionTrial = () => {
   const containerRef = useRef(null);
   const logosRef = useRef([]);
+  // We need a ref to store the ScrollTrigger instance to get its start position
+  const masterTriggerRef = useRef(null); 
   const [viewport, setViewport] = useState("desktop");
 
-  // --- 1. RESIZE HANDLER (Unchanged) ---
+  // --- 1. RESIZE HANDLER ---
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
@@ -52,54 +54,80 @@ const LogoSectionTrial = () => {
 
   useGSAP(() => {
     const logoElements = logosRef.current;
-    
-    // 1. Initial State: Hide all except the first one
-    gsap.set(logoElements, { opacity: 0, scale: 0.9, filter: "blur(10px)" });
-    gsap.set(logoElements[0], { opacity: 1, scale: 1, filter: "blur(0px)" });
+    const totalLogos = logoElements.length;
 
-    // 2. Create the Master Timeline
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: "top top",
-        // Increase this value to make the "stay" longer. 
-        // 500% means the user scrolls 5 screens worth of height to finish the anim.
-        end: "+=500%", 
-        pin: true,
-        scrub: 1, // Smooths the transition so it feels like an animation, not a mechanical lock
-      }
+    // 1. Initial State
+    // All hidden except first
+    gsap.set(logoElements, { opacity: 0, scale: 0.8, filter: "blur(10px)", zIndex: 0 });
+    gsap.set(logoElements[0], { opacity: 1, scale: 1, filter: "blur(0px)", zIndex: 1 });
+
+    // 2. MASTER PIN
+    // This simply locks the visual view. It does NOT handle animation.
+    // We add +100% extra at the end so the last logo "stays" for a while.
+    const pinDistance = (totalLogos) * 50;
+    
+    const masterST = ScrollTrigger.create({
+      trigger: containerRef.current,
+      start: "top top",
+      end: `+=${pinDistance}%`, 
+      pin: true,
+      pinSpacing: true,
     });
+    masterTriggerRef.current = masterST;
 
-    // 3. Build the Sequence
-    // In a scrubbed timeline, 'duration' is actually 'distance'
-    
+    // 3. ANIMATION TRIGGERS
+    // We create a specific trigger for every logo transition.
     logoElements.forEach((logo, i) => {
-      if (i === 0) return; // Skip the first one (it's already visible)
-      
+      if (i === 0) return; // Skip first logo
+
       const prevLogo = logoElements[i - 1];
 
-      // Step A: "Stay for a few scrolls"
-      // We achieve this by adding a relative delay ("+=3") to the start of the next animation.
-      // This creates a gap in the timeline where nothing happens (the user just scrolls).
-      
-      tl.to(prevLogo, {
-        opacity: 0,
-        scale: 1.1,
-        filter: "blur(10px)",
-        duration: 1, // Takes 1 "unit" of scrolling to fade out
-        ease: "power1.inOut"
-      }, "+=3"); // <--- THIS IS THE PAUSE (3x longer than the fade)
+      // Reusable animation function for consistent timing
+      const animateSwitch = (enteringEl, leavingEl, direction) => {
+        // Force Real-time animation (Standard GSAP)
+        const tl = gsap.timeline({ overwrite: "auto" }); // overwrite prevents glitching if scrolling fast
+        
+        // 1. Animate OUT the previous logo
+        tl.to(leavingEl, {
+          opacity: 0,
+          scale: direction === "down" ? 1.1 : 0.8,
+          filter: "blur(10px)",
+          duration: 0.5, // <--- FIXED REAL TIME DURATION (0.5 Second)
+          ease: "power2.inOut",
+          zIndex: 0
+        });
 
-      // Step B: Fade In the current logo
-      tl.to(logo, {
-        opacity: 1,
-        scale: 1,
-        filter: "blur(0px)",
-        duration: 1, // Takes 1 "unit" of scrolling to fade in
-        ease: "power1.inOut"
-      }, "<"); // The "<" means "Start at the same time as the previous fade out"
-      
-      // Result: Crossfade happens, then it waits for the loop to hit the next "+=3"
+        // 2. Animate IN the new logo
+        tl.fromTo(enteringEl, 
+          { 
+            opacity: 0, 
+            scale: direction === "down" ? 0.8 : 1.1, 
+            filter: "blur(10px)",
+            zIndex: 1
+          },
+          { 
+            opacity: 1, 
+            scale: 1, 
+            filter: "blur(0px)",
+            duration: 0.5, // <--- FIXED REAL TIME DURATION (0.5 Second)
+            ease: "power2.inOut" 
+          },
+          "<" // Start at same time
+        );
+      };
+
+      // Create a trigger exactly where this logo should appear
+      // Logic: Master Start + (Index * Viewport Height)
+      ScrollTrigger.create({
+        start: () => masterST.start + (i * window.innerHeight/2),
+        end: () => masterST.start + ((i + 1) * window.innerHeight/2),
+        
+        // When we scroll DOWN into this zone:
+        onEnter: () => animateSwitch(logo, prevLogo, "down"),
+        
+        // When we scroll UP back into this zone:
+        onLeaveBack: () => animateSwitch(prevLogo, logo, "up"),
+      });
     });
 
   }, { scope: containerRef, dependencies: [viewport] });
