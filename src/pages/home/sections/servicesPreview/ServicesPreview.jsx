@@ -45,7 +45,7 @@ const ServicesPreview = () => {
         <FlowingMenu
           link="/services"
           items={demoItems}
-          speed={20}
+          speed={10}
           textColor="#ffffff"
           bgColor="transparent"
           marqueeBgColor="#ffffff"
