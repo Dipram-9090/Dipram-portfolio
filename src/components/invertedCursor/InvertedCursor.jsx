@@ -7,7 +7,6 @@ import { useLocation } from "react-router-dom";
 const InvertedCursor = () => {
   const cursorRef = useRef(null);
   const [isHovering, setIsHovering] = useState(false);
-  const [isVisible, setIsVisible] = useState(false); // New state for visibility
   const { pathname } = useLocation();
 
   // Reset hover state on page navigation
@@ -21,13 +20,11 @@ const InvertedCursor = () => {
 
     // 1. Mouse Movement
     const moveCursor = (e) => {
-      // Create a smooth follow effect or direct lock
       cursor.style.left = `${e.clientX}px`;
       cursor.style.top = `${e.clientY}px`;
       
-      // OPTIONAL: Ensure visibility on movement (fixes edge case where refresh happens inside window)
-      // We use a check to prevent excessive re-renders, only setting it if currently false
-      // (However, for performance, relying on mouseenter/leave below is usually sufficient and cleaner)
+      // Optional GSAP implementation:
+      // gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1, ease: "power2.out" });
     };
 
     // 2. Hover Detection (Event Delegation)
@@ -43,34 +40,27 @@ const InvertedCursor = () => {
       }
     };
 
-    // 3. Click Detection
+    // 3. Click Detection (NEW LOGIC)
+    // We triggers this on 'mousedown' for instant feedback before the 'click' completes.
     const handleMouseDown = (e) => {
+       // If the user clicks on a clickable element, forcedly remove the hover effect
        if (e.target.closest("a, button, .hover-target")) {
          setIsHovering(false);
        }
     };
 
-    // 4. Window Visibility Detection (NEW LOGIC)
-    const handleHide = () => setIsVisible(false);
-    const handleShow = () => setIsVisible(true);
-
     window.addEventListener("mousemove", moveCursor);
     document.addEventListener("mouseover", handleMouseOver);
     document.addEventListener("mouseout", handleMouseOut);
+    // Add the new listener
     document.addEventListener("mousedown", handleMouseDown);
-    
-    // Listen for the mouse leaving/entering the viewport
-    document.addEventListener("mouseleave", handleHide);
-    document.addEventListener("mouseenter", handleShow);
 
     return () => {
       window.removeEventListener("mousemove", moveCursor);
       document.removeEventListener("mouseover", handleMouseOver);
       document.removeEventListener("mouseout", handleMouseOut);
+      // Clean up the new listener
       document.removeEventListener("mousedown", handleMouseDown);
-      
-      document.removeEventListener("mouseleave", handleHide);
-      document.removeEventListener("mouseenter", handleShow);
     };
   }, []);
 
@@ -78,11 +68,6 @@ const InvertedCursor = () => {
     <div 
       ref={cursorRef} 
       className={`inverted-cursor ${isHovering ? "hovering" : ""}`}
-      // Hide opacity when not visible. Using inline style avoids class conflicts.
-      style={{ 
-        opacity: isVisible ? 1 : 0, 
-        // transition: "opacity 0.2s ease-out" // Optional: smooth fade
-      }}
     >
         <CursorIcon 
             color="#FFFFFF" 
