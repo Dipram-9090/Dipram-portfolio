@@ -48,7 +48,7 @@ const Hero = () => {
 
         <ProjectsButton
           className={
-            "cursor-pointer flex items-center justify-center font-euclid font-medium text-xl md:text-3xl lg:text-[3.75rem] lg:leading-16 uppercase py-3 px-8 md:px-12 rounded-full text-white hover:text-black hover:bg-white hover:border-white duration-200 border-2 md:border-4 lg:border-5 whitespace-nowrap w-full md:w-auto"
+            "flex items-center justify-center w-full md:w-auto whitespace-nowrap rounded-full cursor-pointer font-euclid font-medium uppercase text-xl md:text-3xl lg:text-[3.75rem] lg:leading-16 py-3 px-8 md:px-12 bg-white lg:bg-transparent text-black border-white border-2 md:border-4 lg:border-5 lg:text-white lg:duration-200 lg:hover:text-black lg:hover:bg-white lg:hover:border-white"
           }
         />
       </div>

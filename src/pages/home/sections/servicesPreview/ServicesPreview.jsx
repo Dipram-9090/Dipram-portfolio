@@ -55,14 +55,14 @@ const ServicesPreview = () => {
           textSize="text-xl md:text-2xl lg:text-3xl"
         />
       </div>
-      <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-center justify-center w-full sm:w-auto">
+      <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-center justify-center w-full sm:w-auto px-6">
         <LearnMore
           to={"/services"}
-          className="mix-blend-difference hover:bg-[#19E6B6] hover:cursor-pointer duration-200 font-euclid font-medium text-black bg-white rounded-full text-lg md:text-xl lg:text-3xl px-8 py-2 lg:px-12 w-2/3 sm:w-auto text-center"
+          className="mix-blend-difference hover:bg-[#19E6B6] cursor-pointer duration-200 font-euclid font-medium text-black text-lg md:text-xl lg:text-3xl bg-white rounded-full px-8 py-2 lg:px-12 text-center w-full sm:w-auto"
         />
 
         <ProjectsButton
-          className="mix-blend-difference hover:bg-[#19E6B6] hover:text-black hover:ring-[#19E6B6] hover:cursor-pointer duration-200 font-euclid font-medium text-white ring-3 ring-inset ring-white rounded-full uppercase text-lg md:text-xl lg:text-3xl px-8 py-2 lg:px-12 w-2/3 sm:w-auto text-center"
+          className="mix-blend-difference cursor-pointer duration-200 hover:bg-[#19E6B6] hover:ring-[#19E6B6] hover:text-black font-euclid font-medium text-white uppercase text-lg md:text-xl lg:text-3xl ring-3 ring-inset ring-white rounded-full px-8 py-2 lg:px-12 text-center w-full sm:w-auto"
         />
       </div>
     </div>
