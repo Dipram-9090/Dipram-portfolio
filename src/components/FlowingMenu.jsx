@@ -1,10 +1,10 @@
-import { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useMemo, forwardRef } from "react";
 import { gsap } from "gsap";
-import AnimatedLink from "./animatedLink/AnimatedLink";
+import AnimatedLink from "./animatedLink/AnimatedLink"; // Ensure this path is correct
 
 function FlowingMenu({
   items = [],
-  speed = 15,
+  // -- Appearance --
   textColor = "#fff",
   bgColor = "#060010",
   marqueeBgColor = "#fff",
@@ -12,6 +12,22 @@ function FlowingMenu({
   borderColor = "#fff",
   fontClass = "font-sans",
   textSize = "text-base",
+
+  // -- Dimensions & Layout --
+  gap = "gap-[2vw]",
+  paddingLeft = "pl-[2vw]",
+  imageWidth = "w-50",
+  imageHeight = "h-[7vh]",
+  imageRadius = "rounded-full",
+
+  // -- Animation --
+  speed = 15,
+  fadeDuration = 0.25,
+  revealEase = "expoScale",
+  
+  // -- Logic --
+  copies = 4, // Number of times to repeat content for the loop
+  linkComponent = AnimatedLink, // Allow swapping the link component
 }) {
   return (
     <div
@@ -23,6 +39,7 @@ function FlowingMenu({
           <MenuItem
             key={i}
             {...item}
+            // Pass all props down
             speed={speed}
             textColor={textColor}
             marqueeBgColor={marqueeBgColor}
@@ -30,6 +47,15 @@ function FlowingMenu({
             borderColor={borderColor}
             fontClass={fontClass}
             textSize={textSize}
+            gap={gap}
+            paddingLeft={paddingLeft}
+            imageWidth={imageWidth}
+            imageHeight={imageHeight}
+            imageRadius={imageRadius}
+            fadeDuration={fadeDuration}
+            revealEase={revealEase}
+            copies={copies}
+            LinkComponent={linkComponent}
             isFirst={i === 0}
           />
         ))}
@@ -49,141 +75,195 @@ function MenuItem({
   borderColor,
   fontClass,
   textSize,
+  gap,
+  paddingLeft,
+  imageWidth,
+  imageHeight,
+  imageRadius,
+  fadeDuration,
+  revealEase,
+  copies,
+  LinkComponent,
   isFirst,
 }) {
   const itemRef = useRef(null);
-  const marqueeRef = useRef(null);
-  const trackRef = useRef(null);
-  const animationRef = useRef(null);
-  const [repeatCount, setRepeatCount] = useState(8);
+  const marqueeWrapperRef = useRef(null);
+  const marqueeAnimationRef = useRef(null);
+  
+  // Refs for the multiple copies of the content
+  const contentRefs = useRef([]);
 
-  const animationDefaults = { duration: 0.6, ease: "expo.out" };
-
-  const closestEdge = (x, y, w, h) => {
-    const top = (x - w / 2) ** 2 + y ** 2;
-    const bottom = (x - w / 2) ** 2 + (y - h) ** 2;
-    return top < bottom ? "top" : "bottom";
+  // --- Logic 1: Direction Detection ---
+  const getDirection = (e, el) => {
+    const bounds = el.getBoundingClientRect();
+    const y = e.clientY - bounds.top;
+    return y < bounds.height / 2 ? "bottom" : "top";
   };
 
+  // --- Logic 2: Seamless Marquee Setup ---
   useEffect(() => {
-    const calculate = () => {
-      if (!trackRef.current) return;
-      const part = trackRef.current.querySelector(".marquee-part");
-      if (!part) return;
-      const needed = Math.ceil(window.innerWidth / part.offsetWidth);
-      setRepeatCount(Math.max(needed * 2, 8));
-    };
-    calculate();
-    window.addEventListener("resize", calculate);
-    return () => window.removeEventListener("resize", calculate);
-  }, [text, image]);
-
-  useEffect(() => {
-    if (!trackRef.current) return;
+    if (!marqueeWrapperRef.current) return;
 
     const ctx = gsap.context(() => {
-      const track = trackRef.current;
-      const parts = track.querySelectorAll(".marquee-part");
+      // 1. Setup the infinite loop
+      // We target the refs array that we fill in the render loop below
+      const targets = contentRefs.current.filter(Boolean);
+      
+      if (targets.length > 0) {
+        marqueeAnimationRef.current = gsap.to(targets, {
+          xPercent: -100,
+          duration: speed,
+          repeat: -1,
+          ease: "none",
+          paused: true,
+        });
+      }
 
-      let totalWidth = 0;
-      parts.forEach((p) => (totalWidth += p.offsetWidth));
-
-      gsap.set(track, { x: 0 });
-
-      animationRef.current = gsap.to(track, {
-        x: -totalWidth / 2,
-        duration: speed,
-        ease: "expoScale",
-        repeat: -1,
+      // 2. Set initial hidden state
+      gsap.set(marqueeWrapperRef.current, {
+        clipPath: "inset(100% 0% 0% 0%)",
       });
     });
 
-    return () => {
-      ctx.revert();
-      animationRef.current?.kill();
-    };
-  }, [repeatCount, speed]);
+    return () => ctx.revert();
+  }, [speed, copies]);
 
   const onEnter = (e) => {
-    if (!itemRef.current || !marqueeRef.current || !trackRef.current) return;
-    const r = itemRef.current.getBoundingClientRect();
-    const edge = closestEdge(
-      e.clientX - r.left,
-      e.clientY - r.top,
-      r.width,
-      r.height,
-    );
+    if (!itemRef.current || !marqueeWrapperRef.current) return;
 
-    gsap
-      .timeline({ defaults: animationDefaults })
-      .set(marqueeRef.current, { y: edge === "top" ? "-101%" : "101%" }, 0)
-      .set(trackRef.current, { y: edge === "top" ? "101%" : "-101%" }, 0)
-      .to([marqueeRef.current, trackRef.current], { y: "0%" }, 0);
+    const dir = getDirection(e, itemRef.current);
 
-    animationRef.current?.play();
+    // Initial setups for the animation
+    gsap.set(marqueeWrapperRef.current, {
+      clipPath: dir === "top" ? "inset(100% 0% 0% 0%)" : "inset(0% 0% 100% 0%)",
+    });
+
+    // Animate Reveal
+    gsap.to(marqueeWrapperRef.current, {
+      clipPath: "inset(0% 0% 0% 0%)",
+      duration: fadeDuration,
+      ease: revealEase,
+    });
+
+    marqueeAnimationRef.current?.play();
   };
 
   const onLeave = (e) => {
-    if (!itemRef.current || !marqueeRef.current || !trackRef.current) return;
-    const r = itemRef.current.getBoundingClientRect();
-    const edge = closestEdge(
-      e.clientX - r.left,
-      e.clientY - r.top,
-      r.width,
-      r.height,
-    );
+    if (!itemRef.current || !marqueeWrapperRef.current) return;
 
-    gsap
-      .timeline({ defaults: animationDefaults })
-      .to(marqueeRef.current, { y: edge === "top" ? "-101%" : "101%" }, 0)
-      .to(trackRef.current, { y: edge === "top" ? "101%" : "-101%" }, 0);
+    const dir = getDirection(e, itemRef.current);
 
-    animationRef.current?.play();
+    // Animate Hide
+    gsap.to(marqueeWrapperRef.current, {
+      clipPath: dir === "top" ? "inset(100% 0% 0% 0%)" : "inset(0% 0% 100% 0%)",
+      duration: fadeDuration,
+      ease: revealEase,
+    });
+
+    marqueeAnimationRef.current?.pause();
   };
+
+  // Reset refs array on render
+  contentRefs.current = [];
 
   return (
     <div
       ref={itemRef}
-      className="flex-1 relative overflow-hidden text-center"
+      onMouseEnter={onEnter}
+      onMouseLeave={onLeave}
+      className="flex-1 relative overflow-hidden text-center cursor-pointer"
       style={{ borderTop: isFirst ? "none" : `1px solid ${borderColor}` }}
     >
-      <AnimatedLink
+      {/* Static Layer */}
+      <LinkComponent
         to={link}
-        onMouseEnter={onEnter}
-        onMouseLeave={onLeave}
         className={`flex items-center justify-center h-full uppercase cursor-pointer no-underline ${fontClass} ${textSize}`}
         style={{ color: textColor }}
       >
         {text}
-      </AnimatedLink>
+      </LinkComponent>
 
+      {/* Marquee Hover Layer */}
       <div
-        ref={marqueeRef}
-        className="absolute inset-0 overflow-hidden pointer-events-none translate-y-[101%]"
-        style={{ backgroundColor: marqueeBgColor }}
+        ref={marqueeWrapperRef}
+        className="absolute inset-0 overflow-hidden pointer-events-none"
+        style={{
+          backgroundColor: marqueeBgColor,
+          clipPath: "inset(100% 0% 0% 0%)",
+        }}
       >
-        <div ref={trackRef} className="flex h-full">
-          {Array.from({ length: repeatCount }).map((_, i) => (
-            <div
+        <div className="flex h-full w-fit items-center whitespace-nowrap">
+          {/* Dynamically render copies based on 'copies' prop */}
+          {Array.from({ length: copies }).map((_, i) => (
+            <MarqueeGroup
               key={i}
-              className="marquee-part flex items-center shrink-0 w-max"
-            >
-              <div
-                className={`whitespace-nowrap w-max uppercase leading-none pl-[4vw] pr-[2vw] ${fontClass} ${textSize}`}
-                style={{ color: marqueeTextColor }}
-              >
-                {text}
-              </div>
-              <div
-                className="w-50 h-[7vh] rounded-[50px] ml-[2vw] bg-cover bg-center"
-                style={{ backgroundImage: `url(${image})` }}
-              />
-            </div>
+              ref={(el) => (contentRefs.current[i] = el)}
+              text={text}
+              image={image}
+              fontClass={fontClass}
+              textSize={textSize}
+              textColor={marqueeTextColor}
+              gap={gap}
+              paddingLeft={paddingLeft}
+              imageWidth={imageWidth}
+              imageHeight={imageHeight}
+              imageRadius={imageRadius}
+            />
           ))}
         </div>
       </div>
     </div>
   );
 }
+
+// Reusable Group with fully exposed props
+const MarqueeGroup = forwardRef(
+  (
+    {
+      text,
+      image,
+      fontClass,
+      textSize,
+      textColor,
+      gap,
+      paddingLeft,
+      imageWidth,
+      imageHeight,
+      imageRadius,
+    },
+    ref
+  ) => {
+    return (
+      <div
+        ref={ref}
+        className={`flex h-full items-center shrink-0 ${gap} ${paddingLeft}`}
+      >
+        {/* Item A */}
+        <div
+          className={`whitespace-nowrap w-max uppercase leading-none ${fontClass} ${textSize}`}
+          style={{ color: textColor }}
+        >
+          {text}
+        </div>
+        <div
+          className={`${imageWidth} ${imageHeight} ${imageRadius} bg-cover bg-center`}
+          style={{ backgroundImage: `url(${image})` }}
+        />
+
+        {/* Item B (Repeated for density) */}
+        <div
+          className={`whitespace-nowrap w-max uppercase leading-none ${fontClass} ${textSize}`}
+          style={{ color: textColor }}
+        >
+          {text}
+        </div>
+        <div
+          className={`${imageWidth} ${imageHeight} ${imageRadius} bg-cover bg-center`}
+          style={{ backgroundImage: `url(${image})` }}
+        />
+      </div>
+    );
+  }
+);
 
 export default FlowingMenu;
