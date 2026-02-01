@@ -14,6 +14,7 @@ import Footer from "../../components/Footer";
 import Contact from "./sections/contact/Contact";
 import LogoSection from "./sections/logoSection/LogoSection";
 import LogoSectionSimpler from "./sections/logoSection/LogoSectionSimpler";
+import LogoSectionTrial from "./sections/logoSection/LogoSectionTrial";
 
 const Home = () => {
   const location = useLocation();
@@ -98,15 +99,23 @@ const Home = () => {
       </div>
 
       {/* LogoSection */}
-      <div className="w-full overflow-hidden hidden lg:block">
+      {/* <div className="w-full hidden lg:block">
         <LogoSection />
+        <div className="flex justify-end w-full ">
+          <MarqueeWhite />
+        </div>
+      </div> */}
+
+      {/* LogoSectionTrial */}
+      <div className="w-full hidden lg:block">
+        <LogoSectionTrial />
         <div className="flex justify-end w-full ">
           <MarqueeWhite />
         </div>
       </div>
 
       {/* LogoSectionSimpler */}
-      <div className=" w-full overflow-hidden lg:hidden block">
+      <div className=" w-full lg:hidden block">
         <LogoSectionSimpler />
         <div className="flex justify-end w-full ">
           <MarqueeWhite />

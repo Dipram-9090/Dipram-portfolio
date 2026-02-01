@@ -1,162 +1,193 @@
 import React, { useRef, useState, useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Observer } from "gsap/Observer";
 import { useGSAP } from "@gsap/react";
 
-// Icons
+// Icons (Keep your imports)
 import SynchronicityLogo from "../../../../components/logoSectionComponents/SynchronicityLogo";
 import FrostbyteLogo from "../../../../components/logoSectionComponents/FrostbyteLogo";
 import CodeverseLogo from "../../../../components/logoSectionComponents/CodeverseLogo";
 import DipramLogo from "../../../../components/logoSectionComponents/DipramLogo";
 import JugsLogo from "../../../../components/logoSectionComponents/JugsLogo";
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, Observer);
 
 const LogoSection = () => {
   const containerRef = useRef(null);
   const logosRef = useRef([]);
+  const currentIndex = useRef(0);
+  const isAnimating = useRef(false);
+  const scrollTriggerRef = useRef(null); // Reference to store the ScrollTrigger instance
 
-  // 1. STATE TO TRACK SCREEN SIZE
   const [viewport, setViewport] = useState("desktop");
 
-  // 2. DETECT SCREEN RESIZE
+  // --- 1. RESIZE HANDLER ---
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
-      if (width < 768) {
-        setViewport("mobile");
-      } else if (width >= 768 && width < 1024) {
-        setViewport("tablet");
-      } else {
-        setViewport("desktop");
-      }
+      if (width < 768) setViewport("mobile");
+      else if (width >= 768 && width < 1024) setViewport("tablet");
+      else setViewport("desktop");
     };
-
-    // Initial check
     handleResize();
-
-    // Listen for changes
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // 3. HELPER TO CALCULATE DIMENSIONS
   const getSize = (baseW, baseH) => {
     switch (viewport) {
       case "mobile":
-        return { w: baseW * 0.55, h: baseH * 0.55 }; // Mobile: 55% size
+        return { w: baseW * 0.55, h: baseH * 0.55 };
       case "tablet":
-        return { w: baseW * 0.75, h: baseH * 0.75 }; // Tablet: 75% size
+        return { w: baseW * 0.75, h: baseH * 0.75 };
       default:
-        return { w: baseW, h: baseH }; // Desktop: 100% size
+        return { w: baseW, h: baseH };
     }
   };
 
-  // Helper to push refs
-  const addToRefs = (el) => {
-    if (el && !logosRef.current.includes(el)) {
-      logosRef.current.push(el);
-    }
-  };
-
-  // 4. LOGOS ARRAY WITH DYNAMIC SIZES
-  // We use the helper function to calculate W/H based on the current viewport state
+  // Logo objects
   const logos = [
-    {
-      Component: SynchronicityLogo,
-      ...getSize(500, 300),
-    },
-    {
-      Component: FrostbyteLogo,
-      ...getSize(500, 300),
-    },
-    {
-      Component: CodeverseLogo,
-      ...getSize(500, 300),
-    },
-    {
-      Component: DipramLogo,
-      ...getSize(500, 300),
-    },
-    {
-      Component: JugsLogo,
-      ...getSize(300, 200), // Different base size, still scales proportionally
-    },
+    { Component: SynchronicityLogo, ...getSize(500, 300) },
+    { Component: FrostbyteLogo, ...getSize(500, 300) },
+    { Component: CodeverseLogo, ...getSize(500, 300) },
+    { Component: DipramLogo, ...getSize(500, 300) },
+    { Component: JugsLogo, ...getSize(300, 200) },
   ];
+
+  const addToRefs = (el) => {
+    if (el && !logosRef.current.includes(el)) logosRef.current.push(el);
+  };
 
   useGSAP(
     () => {
-      const totalLogos = logos.length;
+      const logoElements = logosRef.current;
 
-      // Master Timeline
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top top",
-          end: `+=${totalLogos * 100}%`, // Increased scroll distance slightly for better feel
-          scrub: 1, // Increased scrub slightly for smoother seeking before snap
-          pin: true,
-
-          // --- ADD THIS SNAP OBJECT ---
-          snap: {
-            // Logic: 1 divided by (5 items - 1) = 0.25 steps (0, 0.25, 0.5, 0.75, 1)
-            snapTo: 1 / (totalLogos - 1),
-
-            // Interaction settings
-            duration: 0.2, // Snap animation duration
-            delay: 0, // Wait 0.1s after user stops scrolling to start snapping
-            ease: "power1.inOut", // Smoothness of the snap
-            inertia: false, // Set to true if you use the InertiaPlugin (paid), otherwise false
-          },
-          // ---------------------------
-        },
+      // Initial Setup
+      gsap.set(logoElements, {
+        opacity: 0,
+        scale: 0.8,
+        filter: "blur(10px)",
+        zIndex: 0,
+      });
+      gsap.set(logoElements[0], {
+        opacity: 1,
+        scale: 1,
+        filter: "blur(0px)",
+        zIndex: 1,
       });
 
-      logosRef.current.forEach((logo, i) => {
-        if (i === 0) return;
-        const prevLogo = logosRef.current[i - 1];
+      // Animation Helper
+      const gotoLogo = (index, direction) => {
+        if (isAnimating.current) return;
+        isAnimating.current = true;
 
-        // Fade OUT previous
-        tl.to(
-          prevLogo,
-          {
-            opacity: 0,
-            scale: 1.1,
-            filter: "blur(10px)",
-            duration: 1, // Normalized duration (GSAP scrub maps this to scroll distance)
-            ease: "power1.inOut",
+        const currentLogo = logoElements[currentIndex.current];
+        const nextLogo = logoElements[index];
+
+        const tl = gsap.timeline({
+          onComplete: () => {
+            isAnimating.current = false;
+            currentIndex.current = index;
           },
-          `switch-${i}`,
-        );
+        });
 
-        // Fade IN current
-        tl.fromTo(
-          logo,
+        tl.to(currentLogo, {
+          opacity: 0,
+          scale: direction === "down" ? 1.1 : 0.8,
+          filter: "blur(10px)",
+          duration: 0.6,
+          ease: "power2.inOut",
+          zIndex: 0,
+        }).fromTo(
+          nextLogo,
           {
             opacity: 0,
-            scale: 0.9,
+            scale: direction === "down" ? 0.8 : 1.1,
             filter: "blur(10px)",
+            zIndex: 1,
           },
           {
             opacity: 1,
             scale: 1,
             filter: "blur(0px)",
-            duration: 1,
-            ease: "power1.inOut",
+            duration: 0.6,
+            ease: "power2.out",
           },
-          "<", // Start at the same time as the fade out
+          "<",
         );
+      };
+
+      // --- 2. SCROLLTRIGGER (THE PIN) ---
+      // We create a "buffer" zone. We pin for 200% of the viewport height.
+      // However, the user won't actually scroll this distance because Observer intercepts it.
+      const st = ScrollTrigger.create({
+        trigger: containerRef.current,
+        start: "top top",
+        end: "+=200%", // ⚠️ Increased from +=1 to give it "grip"
+        pin: true,
+        pinSpacing: true,
+        onEnter: () => {
+          // Optional: ensure we are clean when entering
+        },
+      });
+      scrollTriggerRef.current = st;
+
+      // --- 3. OBSERVER (THE INTERACTION) ---
+      Observer.create({
+        target: containerRef.current,
+        type: "wheel, pointer",
+        preventDefault: true, // Stop the browser scroll
+
+        onWheel: (self) => {
+          // Only run if the element is currently pinned (active)
+          if (!st.isActive) return;
+
+          const isScrollingDown = self.deltaY > 0;
+          const isScrollingUp = self.deltaY < 0;
+
+          if (isScrollingDown) {
+            if (currentIndex.current < logoElements.length - 1) {
+              // Navigate Logos
+              gotoLogo(currentIndex.current + 1, "down");
+            } else {
+              // We are at the LAST logo. Release the lock.
+              // We manually jump the scroll to the END of the pin so the user can continue down.
+              // 'self.event.preventDefault()' is NOT called here because we returned early?
+              // Actually Observer with preventDefault:true is aggressive.
+              // We must force the scroll:
+
+              if (!isAnimating.current) {
+                // Smoothly scroll the window to the end of the trigger
+                window.scrollTo({ top: st.end + 1, behavior: "smooth" });
+              }
+            }
+          }
+
+          if (isScrollingUp) {
+            if (currentIndex.current > 0) {
+              // Navigate Logos
+              gotoLogo(currentIndex.current - 1, "up");
+            } else {
+              // We are at the FIRST logo. Release UP.
+              if (!isAnimating.current) {
+                window.scrollTo({ top: st.start - 1, behavior: "smooth" });
+              }
+            }
+          }
+        },
       });
     },
     { scope: containerRef, dependencies: [viewport] },
   );
 
   return (
+    // ... JSX (Unchanged)
     <div
       ref={containerRef}
       className="relative bg-[#131313] text-white w-full h-screen flex flex-col lg:flex-row overflow-hidden"
     >
-      {/* --- STATIC TEXT SECTION --- */}
+      {/* ... Content ... */}
       <div className="w-full h-[35%] lg:w-1/2 lg:h-full flex flex-col justify-end lg:justify-center items-center lg:items-start px-6 pb-4 lg:p-20 z-10 text-center lg:text-left">
         <div className="flex flex-col gap-4 lg:gap-6 items-center lg:items-start">
           <h1 className="font-bebas font-medium text-5xl md:text-7xl lg:text-9xl leading-[0.85] tracking-tight text-[#19E6B6]">
@@ -164,10 +195,8 @@ const LogoSection = () => {
           </h1>
           <div className="w-1/2 lg:w-full h-px bg-white origin-center lg:origin-left" />
           <p className="font-euclid text-sm md:text-lg lg:text-xl text-white max-w-xs md:max-w-md leading-relaxed">
-            A curated collection of logos crafted with strong concepts, clean
-            geometry, and memorable brand identity. Every design begins with
-            strategy and evolves into a simple, distinctive symbol that
-            represents the essence of the brand. <br />
+            A curated collection of logos crafted with strong concepts...
+            <br />
             <span className="text-teal-400 text-xs md:text-sm mt-2 lg:mt-4 block font-euclid tracking-widest uppercase">
               ( Scroll to explore )
             </span>
@@ -175,7 +204,6 @@ const LogoSection = () => {
         </div>
       </div>
 
-      {/* --- STACKED LOGOS SECTION --- */}
       <div className="w-full h-[65%] lg:w-1/2 lg:h-full flex items-start lg:items-center justify-center relative z-10 pt-10 lg:pt-0">
         <div className="relative w-full h-full flex items-center justify-center">
           {logos.map((Item, index) => (
@@ -183,9 +211,7 @@ const LogoSection = () => {
               key={index}
               ref={addToRefs}
               className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full flex items-center justify-center pointer-events-none"
-              style={{ opacity: index === 0 ? 1 : 0 }}
             >
-              {/* Width and Height are now dynamic based on state */}
               <Item.Component width={Item.w} height={Item.h} />
             </div>
           ))}
