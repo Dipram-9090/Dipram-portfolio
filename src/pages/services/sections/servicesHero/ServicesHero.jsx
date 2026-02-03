@@ -8,7 +8,7 @@ const ServicesHero = () => {
       <WavyGradient />
       <img
         className="absolute z-20 bottom-0 left-[50%] -translate-x-[50%] h-[90vh] lg:h-[115vh] md:h-[110vh] object-cover"
-        src="/img/servicesPage/services-hero.png"
+        src="/img/servicesPage/services-hero.webp"
         alt=""
       />
       <FilledABOUT text="SERVICES" className="absolute z-10 w-full lg:bottom-0 md:bottom-30 top-50" />

@@ -50,7 +50,7 @@ const Projects = () => {
       <img
         ref={imgRef}
         className="absolute bottom-0 lg:h-[110vh] md:h-screen h-[70vh] object-cover md:object-cover z-20"
-        src="/img/projects/main-img.png"
+        src="/img/projects/main-img.webp"
         alt=""
       />
 

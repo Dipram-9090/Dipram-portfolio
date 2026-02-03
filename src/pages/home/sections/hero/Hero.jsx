@@ -11,7 +11,7 @@ const Hero = () => {
       {/* --- Profile Image --- */}
       <div className="absolute w-full h-full pointer-events-none">
         <img
-          src="/img/hero/hero-img.png"
+          src="/img/hero/hero-img.webp"
           alt="Profile Image"
           className="absolute h-[90vh] md:h-[90vh] lg:h-full object-cover -translate-x-[50%] left-[50%] bottom-0 z-10"
         />

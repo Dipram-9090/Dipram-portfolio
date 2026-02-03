@@ -10,22 +10,22 @@ const ServicesPreview = () => {
     {
       link: "/services",
       text: "Product Interface Design",
-      image: "/img/services/image2.png",
+      image: "/img/services/image2.webp",
     },
     {
       link: "/services",
       text: "Brand & Visual Systems",
-      image: "/img/services/image3.png",
+      image: "/img/services/image3.webp",
     },
     {
       link: "/services",
       text: "Marketing & Growth Creatives",
-      image: "/img/services/image4.png",
+      image: "/img/services/image4.webp",
     },
     {
       link: "/services",
       text: "End-to-End Design Support",
-      image: "/img/services/image1.png",
+      image: "/img/services/image1.webp",
     },
   ];
   return (
