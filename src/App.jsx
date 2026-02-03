@@ -9,8 +9,6 @@ import Services from "./pages/services/Services";
 import Navbar from "./components/navbar/Navbar";
 import GoToTop from "./components/GoToTop";
 import InvertedCursor from "./components/invertedCursor/InvertedCursor";
-import Projects from "./pages/home/sections/projects/Projects";
-import Footer from "./components/Footer";
 import ErrorPage from "./pages/error/ErrorPage";
 
 
