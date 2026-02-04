@@ -31,11 +31,19 @@ const Footer = () => {
           <div className="flex flex-col gap-3">
             <h4 className="font-bebas font-medium text-2xl">Follow Me</h4>
             <div className="flex gap-3">
-              <a href="https://www.linkedin.com/in/dipram-biswas" target="blank">
-                <LinkedInIcon color="black" width={30} height={30} />
+              <a
+                href="https://www.linkedin.com/in/dipram-biswas"
+                target="_blank"
+                className="relative z-10 flex items-center justify-center w-8 h-8"
+              >
+                <LinkedInIcon color="black" width="2rem" height="2rem" />
               </a>
-              <a href="https://www.behance.net/diprambiswas9090" target="blank">
-                <BehanceIcon color="black" width={30} height={30} />
+              <a
+                href="https://www.behance.net/diprambiswas9090"
+                target="_blank"
+                className="relative z-10 flex items-center justify-center w-8 h-8"
+              >
+                <BehanceIcon color="black" width="2rem" height="2rem" />
               </a>
             </div>
           </div>
