@@ -28,3 +28,4 @@ const CodeClubLogo = (props) => (
 );
 
 export default CodeClubLogo;
+

@@ -53,11 +53,12 @@ const LogoSectionSimpler = () => {
 
   const logos = [
     { Component: SynchronicityLogo, ...getSize(500, 300) },
+    { Component: CodeClubLogo, ...getSize(500, 200) },
     { Component: FrostbyteLogo, ...getSize(500, 300) },
     { Component: CodeverseLogo, ...getSize(500, 300) },
     { Component: DipramLogo, ...getSize(500, 300) },
-    { Component: JugsLogo, ...getSize(300, 250) },
-    { Component: CodeClubLogo, ...getSize(500, 250) },
+    { Component: JugsLogo, ...getSize(500, 150) },
+    
   ];
 
   useGSAP(
