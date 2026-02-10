@@ -111,9 +111,9 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Brand Identity */}
+      {/* Markerting Creatives */}
       <div className="w-full overflow-hidden">
-      <IndiProjectSection text="Brand Identity" />
+      <IndiProjectSection text="Posters" />
         <div className="flex justify-start w-full ">
           <MarqueeBlue />
         </div>
