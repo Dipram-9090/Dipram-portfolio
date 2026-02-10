@@ -105,16 +105,16 @@ const Home = () => {
         </div>
       </div> */}
 
-      {/* LogoSectionTrial */}
-      <div className="w-full hidden lg:block">
+      {/* LogoSectionDesktop */}
+      {/* <div className="w-full hidden lg:block">
         <LogoSectionDesktop />
         <div className="flex justify-end w-full ">
           <MarqueeWhite />
         </div>
-      </div>
+      </div> */}
 
       {/* LogoSectionSimpler */}
-      <div className=" w-full lg:hidden block">
+      <div className=" w-full ">
         <LogoSectionSimpler />
         <div className="flex justify-end w-full ">
           <MarqueeWhite />

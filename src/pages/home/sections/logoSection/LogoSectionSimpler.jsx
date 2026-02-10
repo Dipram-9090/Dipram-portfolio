@@ -9,6 +9,7 @@ import FrostbyteLogo from "../../../../components/logoSectionComponents/Frostbyt
 import CodeverseLogo from "../../../../components/logoSectionComponents/CodeverseLogo";
 import DipramLogo from "../../../../components/logoSectionComponents/DipramLogo";
 import JugsLogo from "../../../../components/logoSectionComponents/JugsLogo";
+import CodeClubLogo from "../../../../components/logoSectionComponents/CodeClubLogo";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -56,6 +57,7 @@ const LogoSectionSimpler = () => {
     { Component: CodeverseLogo, ...getSize(500, 300) },
     { Component: DipramLogo, ...getSize(500, 300) },
     { Component: JugsLogo, ...getSize(300, 250) },
+    { Component: CodeClubLogo, ...getSize(500, 250) },
   ];
 
   useGSAP(
@@ -94,7 +96,7 @@ const LogoSectionSimpler = () => {
     >
       {/* --- HEADER --- */}
       <div className="flex flex-col items-center text-center gap-4 z-10">
-        <p className="font-euclid text-lg md:text-lg lg:text-xl text-white max-w-lg leading-relaxed">
+        <p className="font-euclid text-lg md:text-lg lg:text-xl text-white max-w-2xl leading-relaxed">
           A curated collection of logos crafted with strong concepts, clean
           geometry, and memorable brand identity. Every design begins with
           strategy and evolves into a simple, distinctive symbol that represents

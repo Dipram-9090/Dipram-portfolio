@@ -7,7 +7,7 @@ body {
 .inverted-cursor {
   width: 2.25rem;
   height: 2.25rem;
-  background-color: none; /* MUST be white for inversion */
+  background-color: transparent; /* MUST be white for inversion */
   border-radius: 50%;
   position: fixed;
   top: 0;
