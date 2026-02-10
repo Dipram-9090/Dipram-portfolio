@@ -5,7 +5,7 @@ import AboutPreview from "./sections/about/AboutPreview";
 import ServicesPreview from "./sections/servicesPreview/ServicesPreview";
 import Projects from "./sections/projects/Projects";
 import ScrollBackgroundChange from "../../components/ScrollBackgroundChange";
-import Logofolio from "./sections/logofolio/Logofolio";
+import IndiProjectSection from "../../components/indiProjectSection/IndiProjectSection";
 
 import { useLocation } from "react-router-dom";
 import { useLenis } from "lenis/react";
@@ -20,11 +20,9 @@ const Home = () => {
   const lenis = useLenis();
 
   useEffect(() => {
-    // 1. Define your mapping: "state name" -> "CSS selector"
     const sectionSelectors = {
       projects: ".projects-section",
-      contact: ".contact-section", // ⚠️ Make sure your Contact section has this class
-      // you can add more here later, e.g., about: ".about-section"
+      contact: ".contact-section",
     };
 
     const scrollType = location.state?.scrollTo;
@@ -48,7 +46,7 @@ const Home = () => {
         force: true,
       });
     }, 100);
-  }, [lenis, location.state]); // Updated dependency array to catch state changes
+  }, [lenis, location.state]);
 
   ScrollBackgroundChange();
 
@@ -91,19 +89,11 @@ const Home = () => {
 
       {/* Logofolio */}
       <div className="w-full overflow-hidden">
-      <Logofolio />
+      <IndiProjectSection text="Logofolio" />
         <div className="flex justify-start w-full ">
           <MarqueeBlue />
         </div>
       </div>
-
-      {/* LogoSection */}
-      {/* <div className="w-full hidden lg:block">
-        <LogoSection />
-        <div className="flex justify-end w-full ">
-          <MarqueeWhite />
-        </div>
-      </div> */}
 
       {/* LogoSectionDesktop */}
       {/* <div className="w-full hidden lg:block">
@@ -121,7 +111,13 @@ const Home = () => {
         </div>
       </div>
 
-      {/* <div className="h-screen w-full bg-[#131313]"></div> */}
+      {/* Brand Identity */}
+      <div className="w-full overflow-hidden">
+      <IndiProjectSection text="Brand Identity" />
+        <div className="flex justify-start w-full ">
+          <MarqueeBlue />
+        </div>
+      </div>
 
       <Contact />
       <Footer />
