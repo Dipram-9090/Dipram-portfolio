@@ -15,24 +15,18 @@ const IndiProjectSection = ({ text }) => {
   const pathRef = useRef(null);
   const trailRef = useRef(null);
 
-  // --- 1. Generate Tapered Particles ---
-  // We create 30 particles.
-  // Instead of random, we calculate radius based on index 'i'.
-  // i=0 is closest to plane (Radius 4). i=29 is furthest (Radius 0.5).
   const particles = useMemo(() => {
     const count = 15;
     return Array.from({ length: count }).map((_, i) => ({
       id: i,
-      // Taper Logic: Start big (4px), shrink linearly to small (0.5px)
-      r: 4 - (i / count) * 3.5, 
-      // Fade Logic: Start opaque (0.8), fade to transparent (0)
-      opacity: 0.8 - (i / count) * 0.8, 
+      r: 8 - (i / count) * 5,
+      opacity: 0.8 - (i / count) * 0.8,
     }));
   }, []);
 
   useGSAP(
     () => {
-      // --- 2. Text Animation ---
+      // --- Text Animation (Unchanged) ---
       const split1 = new SplitText(text1Ref.current, {
         type: "chars,words",
         charsClass: "char",
@@ -54,25 +48,26 @@ const IndiProjectSection = ({ text }) => {
       tlText.fromTo(
         split1.chars,
         { y: "0vw" },
-        { y: "-11.5vw", stagger: 0.03, ease: "none", duration: 0.2 }
+        { y: "-11.5vw", stagger: 0.03, ease: "none", duration: 0.2 },
       );
       tlText.fromTo(
         split2.chars,
         { y: "0vw" },
         { y: "-11.5vw", stagger: 0.03, ease: "none", duration: 0.2 },
-        "<0.05"
+        "<0.05",
       );
 
-      // --- 3. Plane & Trail Motion ---
+      // --- Plane & Trail Motion ---
       const tlPlane = gsap.timeline({
         repeat: -1,
-        defaults: { duration: 5, ease: "linear" },
+        defaults: { duration: 6, ease: "linear" },
       });
 
-      // Combine Plane + All Particles into one target array
-      const targets = [planeRef.current, ...trailRef.current.children];
+      // KEY CHANGE 1: We select the 'children' of trailRef,
+      // which are now the <g> wrappers, NOT the circles.
+      const wrapperTargets = [planeRef.current, ...trailRef.current.children];
 
-      tlPlane.to(targets, {
+      tlPlane.to(wrapperTargets, {
         motionPath: {
           path: pathRef.current,
           align: pathRef.current,
@@ -81,29 +76,25 @@ const IndiProjectSection = ({ text }) => {
           start: 0,
           end: 1,
         },
-        // Very tight stagger keeps the big particles close to the plane
         stagger: {
-          each: 0.08,
+          each: 0.04,
           repeat: -1,
         },
       });
 
-      // --- 4. Trail Turbulence ---
-      // We animate scale slightly around 1 (e.g., 0.8 to 1.2).
-      // Since SVG transform scale multiplies the base radius 'r', 
-      // the large particles stay large and small ones stay small.
-      gsap.to(trailRef.current.children, {
-        scale: "random(0.8, 1.5)", // Subtle pulsation
-        // x: "random(-0.02, 0.02)", // Slight jitter for "smoke" effect
-        // y: "random(-0.02, 0.02)",
-        duration: "random(0.2, 0.5)",
+      // --- Trail Turbulence ---
+      // KEY CHANGE 2: We target the specific class '.trail-circle'
+      // to animate the shape INSIDE the moving wrapper.
+      gsap.to(".trail-circle", {
+        scale: "random(0.2, 1.8)",
+        // KEY CHANGE 3: Increased values. SVG units are pixels.
+        // 0.002 is invisible. 3px is visible.
+        x: "random(-10, 10)",
+        y: "random(-30, 30)",
+        duration: "random(2, 4)",
         ease: "sine.inOut",
         repeat: -1,
         yoyo: true,
-        stagger: {
-          amount: 1,
-          from: "random",
-        },
       });
 
       return () => {
@@ -111,14 +102,17 @@ const IndiProjectSection = ({ text }) => {
         split2.revert();
       };
     },
-    { scope: containerRef }
+    { scope: containerRef },
   );
 
   const pathData =
     "M616.736 6.9532C456.736 -54.0468 285.736 373.953 95.7357 368.953C-94.2642 363.953 37.4214 41.0248 175.736 67.9532C288.736 89.9532 342.714 445.953 509.736 445.953C718.149 445.953 776.736 67.9532 616.736 6.9532Z";
 
   return (
-    <div className="relative bg-[#271CD0] lg:h-screen md:h-[50vh] h-[30vh] w-full flex items-center justify-center">
+    <div
+      ref={containerRef}
+      className="relative bg-[#271CD0] lg:h-screen md:h-[50vh] h-[30vh] w-full flex items-center justify-center"
+    >
       <svg
         viewBox="0 0 710 447"
         fill="none"
@@ -130,31 +124,33 @@ const IndiProjectSection = ({ text }) => {
         {/* Trail Group */}
         <g ref={trailRef}>
           {particles.map((p) => (
-            <circle
-              key={p.id}
-              r={p.r}
-              fill="white"
-              opacity={p.opacity}
-              // transformBox: "fill-box" ensures scaling happens from the center of the circle
-              style={{ transformBox: "fill-box", transformOrigin: "center" }}
-            />
+            // KEY CHANGE 4: The Wrapper <g>
+            // This <g> gets moved by motionPath along the curve
+            <g key={p.id}>
+              <circle
+                className="trail-circle" // Class for selecting in GSAP
+                r={p.r}
+                fill="white"
+                opacity={p.opacity}
+                // transformBox is vital here so the circle scales from its own center
+                style={{ transformBox: "fill-box", transformOrigin: "center" }}
+              />
+            </g>
           ))}
         </g>
 
         {/* Plane Group */}
         <g ref={planeRef}>
           <path
-            d="M0.607892 0.0140339C0.759267 -0.0157448 0.916117 0.00218182 1.05711 0.0648152L1.05906 0.0667683L13.2446 5.55993C13.3764 5.61915 13.4883 5.71595 13.5669 5.83728C13.6453 5.95858 13.687 6.10004 13.687 6.2445C13.6867 6.38937 13.645 6.53134 13.5659 6.65271C13.4868 6.77412 13.3732 6.86934 13.2407 6.9281L1.05906 12.4203C0.917043 12.481 0.759457 12.4978 0.607892 12.4681C0.456456 12.4384 0.317966 12.363 0.209455 12.2533L0.186994 12.2318C-0.0195566 12.0058 -0.0544266 11.6821 0.0795719 11.4066C0.0821896 11.4009 0.0853181 11.3957 0.088361 11.39L1.82762 7.05798C1.86883 6.98084 1.9302 6.91584 2.00438 6.8695C2.07842 6.82329 2.16325 6.79755 2.25047 6.79431L11.6557 6.46423C11.6845 6.46417 11.7131 6.45863 11.7397 6.44763C11.7665 6.43652 11.7915 6.4203 11.812 6.39978C11.8325 6.37928 11.8488 6.35427 11.8598 6.32751C11.8709 6.3009 11.8764 6.27231 11.8764 6.24353C11.8764 6.21451 11.8709 6.18537 11.8598 6.15857C11.8488 6.13191 11.8323 6.10772 11.812 6.08728C11.7915 6.06676 11.7665 6.05053 11.7397 6.03942C11.7131 6.02838 11.6846 6.02191 11.6557 6.02185L2.24852 5.68982C2.16129 5.68657 2.07648 5.66083 2.00242 5.61462C1.92825 5.56828 1.86688 5.50328 1.82567 5.42614L0.0873844 1.09704L0.081525 1.08435C0.0127785 0.946306 -0.0118272 0.790538 0.0112125 0.638057C0.0343307 0.485483 0.103811 0.343359 0.210431 0.231807C0.317186 0.120218 0.456378 0.0439055 0.607892 0.0140339Z"
+            d="M62.0875 0.0483447C62.6073 -0.0542382 63.1459 0.00751602 63.63 0.223278L63.6367 0.230006L105.481 19.1531C105.934 19.3571 106.318 19.6905 106.588 20.1085C106.857 20.5264 107 21.0136 107 21.5113C106.999 22.0103 106.856 22.4994 106.584 22.9175C106.312 23.3357 105.922 23.6638 105.467 23.8662L63.6367 42.7859C63.1491 42.995 62.6079 43.0531 62.0875 42.9507C61.5674 42.8482 61.0919 42.5887 60.7193 42.2106L60.6421 42.1366C59.9328 41.3581 59.8131 40.243 60.2732 39.2939C60.2822 39.2744 60.293 39.2562 60.3034 39.2367L66.2759 24.3136C66.4174 24.0479 66.6282 23.8239 66.8829 23.6643C67.1371 23.5051 67.4284 23.4165 67.7279 23.4053L100.025 22.2682C100.124 22.268 100.222 22.2489 100.313 22.211C100.405 22.1728 100.491 22.1169 100.561 22.0462C100.632 21.9756 100.688 21.8894 100.726 21.7973C100.763 21.7056 100.783 21.6071 100.783 21.5079C100.783 21.408 100.764 21.3076 100.726 21.2153C100.688 21.1234 100.631 21.0401 100.561 20.9697C100.491 20.899 100.405 20.8431 100.313 20.8048C100.222 20.7668 100.124 20.7445 100.025 20.7443L67.7212 19.6005C67.4217 19.5893 67.1305 19.5007 66.8762 19.3415C66.6214 19.1818 66.4107 18.9579 66.2692 18.6922L60.3001 3.77913L60.28 3.7354C60.0439 3.25987 59.9594 2.72328 60.0385 2.198C60.1179 1.67241 60.3565 1.18282 60.7226 0.798539C61.0892 0.414131 61.5672 0.151247 62.0875 0.0483447Z"
             fill="white"
-            transform="scale(3)"
+            transform="scale(1.2)"
           />
+          <circle cx="3" cy="22" r="3" fill="white" fill-opacity="0.1" />
         </g>
       </svg>
 
-      <div
-        ref={containerRef}
-        className="h-[11.5vw] flex flex-col items-center justify-start gap-0 overflow-hidden"
-      >
+      <div className="h-[11.5vw] flex flex-col items-center justify-start gap-0 overflow-hidden">
         <h1
           ref={text1Ref}
           className="font-bebas uppercase text-[15vw] leading-[10vw] pt-[1.5vw] font-medium text-white"
@@ -173,3 +169,11 @@ const IndiProjectSection = ({ text }) => {
 };
 
 export default IndiProjectSection;
+
+<svg
+  width="107"
+  height="43"
+  viewBox="0 0 107 43"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+></svg>;
