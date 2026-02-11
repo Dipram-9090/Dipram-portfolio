@@ -42,7 +42,7 @@ const Hero = () => {
     // Overlaps with text animation (starts 0.8s earlier).
     // Adds a subtle scale effect (1.1 -> 1) to make it feel 3D.
     tl.from(heroImgRef.current, {
-      y: 50,
+      // x: 500,
       opacity: 0,
       duration: 1,
       ease: "power2.inOut",
