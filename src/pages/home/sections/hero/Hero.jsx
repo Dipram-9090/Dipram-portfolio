@@ -42,6 +42,7 @@ const Hero = () => {
     // Overlaps with text animation (starts 0.8s earlier).
     // Adds a subtle scale effect (1.1 -> 1) to make it feel 3D.
     tl.from(heroImgRef.current, {
+      y: 50,
       opacity: 0,
       duration: 1,
       ease: "power2.inOut",
@@ -71,12 +72,12 @@ const Hero = () => {
     tl.fromTo(
       buttonsRef.current.children,
       {
-        y: 40,
+        // y: 40,
         opacity: 0, // Force Start,
         pointerEvents: "none",
       },
       {
-        y: 0,
+        // y: 0,
         opacity: 1, // Force End
         duration: 0.8,
         ease: "power2.inOut",
