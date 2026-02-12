@@ -39,8 +39,7 @@ const IndiProjectSection = ({ text }) => {
       const tlText = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
-          start: "top 60%",
-          end: "bottom top",
+          start: "top 20%",
           toggleActions: "play reverse play reverse",
         },
       });
@@ -91,7 +90,7 @@ const IndiProjectSection = ({ text }) => {
         // 0.002 is invisible. 3px is visible.
         x: "random(-10, 10)",
         y: "random(-30, 30)",
-        duration: "random(2, 4)",
+        duration: "random(1, 1.5)",
         ease: "sine.inOut",
         repeat: -1,
         yoyo: true,
