@@ -1,5 +1,3 @@
-import React from "react";
-
 const BaseIcon = ({ 
   width = 25,
   height = 25,

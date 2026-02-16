@@ -1,46 +1,50 @@
-import React from "react";
+import React, { useState } from "react";
 import gsap from "gsap";
+
+import LinkedInIcon from "../../../../../components/iconComponents/LinkedInIcon";
+import BehanceIcon from "../../../../../components/iconComponents/BehanceIcon";
 
 const Socials = () => {
   // 1. Define your data here
   const socialData = [
     // {
-    //   name: "Twitter",
+    //   Component: "Twitter",
     //   url: "#",
     //   icon: "/svg/hero/bi_twitter-x.svg",
     // },
     {
-      name: "Linkedin",
+      name: "LinkedIn",
+      Component: LinkedInIcon,
       url: "https://www.linkedin.com/in/dipram-biswas/",
-      icon: "/svg/hero/Linkedin.svg",
     },
     {
       name: "Behance",
+      Component: BehanceIcon,
       url: "https://www.behance.net/diprambiswas9090",
-      icon: "/svg/hero/Behance.svg",
     },
-    
   ];
 
   // 2. Animation handlers (unchanged, they work perfectly with mapping)
   const handleMouseEnter = (e) => {
     gsap.to(e.currentTarget, {
       duration: 0.3,
-      backgroundColor: "rgba(0,0,0,0.5)",
-      ease: "power1.out",
+      color: "#5043FA",
+      backgroundColor: "rgba(255, 255, 255, 1)",
+      ease: "power2.out",
     });
   };
 
   const handleMouseLeave = (e) => {
     gsap.to(e.currentTarget, {
       duration: 0.3,
-      backgroundColor: "rgba(0,0,0,0)",
-      ease: "power1.out",
+      color: "#FFFFFF",
+      backgroundColor: "rgba(255, 255, 255, 0)",
+      ease: "power2.out",
     });
   };
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-2">
       {/* 3. Map over the data array */}
       {socialData.map((item, index) => (
         <a
@@ -50,13 +54,9 @@ const Socials = () => {
           rel="noreferrer" // Good practice for security with target="_blank"
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
-          className="hover:cursor-pointer flex gap-4 px-6 py-2 rounded-full"
+          className="hover:cursor-pointer flex gap-4 px-6 py-2 rounded-full "
         >
-          <img
-            src={item.icon}
-            alt={item.name}
-            className="h-full w-auto"
-          />
+          <item.Component />
           <p className="font-euclid text-xl">{item.name}</p>
         </a>
       ))}
