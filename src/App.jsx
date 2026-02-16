@@ -11,7 +11,6 @@ import GoToTop from "./components/GoToTop";
 import InvertedCursor from "./components/invertedCursor/InvertedCursor";
 import ErrorPage from "./pages/error/ErrorPage";
 
-
 const AppContent = () => {
   const lenis = useLenis();
   const location = useLocation();
@@ -96,8 +95,8 @@ const App = () => {
     <ReactLenis
       root
       options={{
-        duration: 0.8,
-        easing: (t) => 1 - Math.pow(1 - t, 3),
+        easing: (t) => 1 - Math.pow(1 - t, 3), // Cubic easing for a smooth stop
+        duration: 1.5,
         smoothWheel: true,
         smoothTouch: true,
         syncTouch: false,

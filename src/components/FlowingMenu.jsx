@@ -1,6 +1,6 @@
-import React, { useRef, useEffect, useMemo, forwardRef } from "react";
+import { useRef, useEffect, forwardRef } from "react";
 import { gsap } from "gsap";
-import AnimatedLink from "./animatedLink/AnimatedLink"; // Ensure this path is correct
+import AnimatedLink from "./animatedLink/AnimatedLink"; 
 
 function FlowingMenu({
   items = [],
