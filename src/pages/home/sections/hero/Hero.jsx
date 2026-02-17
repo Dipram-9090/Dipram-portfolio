@@ -5,6 +5,9 @@ import ContactButton from "../../../../components/ContactButton";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useRef } from "react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const Hero = () => {
   // 1. Create refs for all distinct elements
@@ -14,7 +17,8 @@ const Hero = () => {
   const titleRef = useRef(null);
   const buttonsRef = useRef(null);
   const socialsRef = useRef(null);
-
+  const mainTextRef = useRef(null);
+  /*
   useGSAP(() => {
     // Reduced delay to 0.5s (3s is too long unless you have a loading screen)
     const tl = gsap.timeline({ delay: 2.8 });
@@ -42,7 +46,6 @@ const Hero = () => {
     // Overlaps with text animation (starts 0.8s earlier).
     // Adds a subtle scale effect (1.1 -> 1) to make it feel 3D.
     tl.from(heroImgRef.current, {
-      // x: 500,
       opacity: 0,
       duration: 1,
       ease: "power2.inOut",
@@ -54,15 +57,15 @@ const Hero = () => {
       titleRef.current.children,
       {
         clipPath: "inset(0 100% 0 0)",
-        translateX: "50%",
+        // translateX: "50%",
         opacity: 0,
       },
       {
         clipPath: "inset(0 0% 0 0)",
-        translateX: 0,
+        // translateX: 0,
         opacity: 1,
         duration: 1.2,
-        ease: "power3.out",
+        ease: "power2.out",
       },
       "-=1.0",
     );
@@ -101,6 +104,51 @@ const Hero = () => {
       },
       "-=0.5",
     );
+  }, []); 
+*/
+
+  useGSAP(() => {
+    const parallax = gsap.timeline({
+      scrollTrigger: {
+        trigger: heroSectionRef.current,
+        start: "top top",
+        end: "bottom top",
+        scrub: 0.5,
+      },
+    });
+
+    parallax.to(
+      socialsRef.current,
+      {
+        translateY: -150,
+        force3D: true,
+      },
+      0,
+    );
+    parallax.to(
+      buttonsRef.current,
+      {
+        translateY: -150,
+        force3D: true,
+      },
+      0,
+    );
+    parallax.to(
+      heroImgRef.current,
+      {
+        translateY: 50,
+        force3D: true,
+      },
+      0,
+    );
+    parallax.to(
+      mainTextRef.current,
+      {
+        translateY: 150,
+        force3D: true,
+      },
+      0,
+    );
   }, []);
 
   return (
@@ -124,7 +172,10 @@ const Hero = () => {
 
       {/* --- Main Text Content (DIPRAM + Titles) --- */}
       <div className="absolute z-15 md:z-0 lg:z-0 h-screen w-full flex justify-center pointer-events-none">
-        <div className="flex flex-col absolute top-[50%] md:top-[25%] lg:top-[35%] w-full max-w-[90%] md:max-w-2xl lg:max-w-[60vw] mx-4 gap-4 md:gap-5">
+        <div
+          ref={mainTextRef}
+          className="flex flex-col absolute top-[50%] md:top-[25%] lg:top-[35%] w-full max-w-[90%] md:max-w-2xl lg:max-w-[60vw] mx-4 gap-4 md:gap-5 will-change-transform"
+        >
           {/* Main Text Image */}
           <img
             ref={DIPRAMbgRef}
@@ -148,7 +199,7 @@ const Hero = () => {
       {/* ADDED REF HERE */}
       <div
         ref={buttonsRef}
-        className="absolute z-10 left-1/2 -translate-x-1/2 bottom-24 md:bottom-32 lg:bottom-48 flex flex-col md:flex-row justify-center items-center gap-4 w-full px-4"
+        className="absolute z-10 left-1/2 -translate-x-1/2 bottom-24 md:bottom-32 lg:bottom-48 flex flex-col md:flex-row justify-center items-center gap-4 w-full px-4 will-change-transform"
       >
         <ContactButton
           className="cursor-pointer flex items-center justify-center font-euclid font-medium 
@@ -171,7 +222,7 @@ const Hero = () => {
       {/* ADDED REF HERE */}
       <div
         ref={socialsRef}
-        className="lg:flex md:hidden hidden absolute z-20 bottom-8 left-0 w-full justify-center lg:justify-start lg:bottom-48 lg:left-0 lg:w-auto lg:px-8 text-white"
+        className="lg:flex md:hidden hidden absolute z-20 bottom-8 left-0 w-full justify-center lg:justify-start lg:bottom-48 lg:left-0 lg:w-auto lg:px-8 text-white will-change-transform"
       >
         <Socials />
       </div>

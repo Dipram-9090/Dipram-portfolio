@@ -9,7 +9,7 @@ const ABOUTsvg = () => {
     gsap.from(".svgPath", {
       scrollTrigger: {
         trigger: ".svgPath",
-        start: "top 50%",
+        start: "top 70%",
       },
       opacity: 0,
       filter: "blur(10px)",
