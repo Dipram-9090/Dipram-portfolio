@@ -63,13 +63,13 @@ const AboutPreview = () => {
           gsap.from([toolRef.current, iconRef.current], {
             scrollTrigger: {
               trigger: toolRef.current,
-              start: "top 70%", // Trigger a bit earlier so user sees it
+              start: isMobile ? "top 80%" : "top 70%",
               toggleActions: "play none none reverse", // OPTIMIZATION: Don't scrub simple fades. Just play them.
             },
             // y: 50,
             opacity: 0,
             ease: "power2.out",
-            duration: 0.8,
+            duration: 0.5,
             // stagger: 0.1,
           });
 
@@ -77,7 +77,7 @@ const AboutPreview = () => {
           gsap.from(buttonRef.current, {
             scrollTrigger: {
               trigger: buttonRef.current,
-              start: "top 80%",
+              start: isMobile ? "top 90%" : "top 80%",
               toggleActions: "play none none reverse", // Don't scrub buttons, it feels unresponsive
             },
             // y: 30,

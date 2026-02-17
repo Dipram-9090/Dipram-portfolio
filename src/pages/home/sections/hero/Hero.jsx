@@ -18,7 +18,7 @@ const Hero = () => {
   const buttonsRef = useRef(null);
   const socialsRef = useRef(null);
   const mainTextRef = useRef(null);
-  
+
   useGSAP(() => {
     // Reduced delay to 0.5s (3s is too long unless you have a loading screen)
     const tl = gsap.timeline({ delay: 2.8 });
@@ -104,52 +104,73 @@ const Hero = () => {
       },
       "-=0.5",
     );
-  }, []); 
-
-
-  useGSAP(() => {
-    const parallax = gsap.timeline({
-      scrollTrigger: {
-        trigger: heroSectionRef.current,
-        start: "top top",
-        end: "bottom top",
-        scrub: 0.5,
-      },
-    });
-
-    parallax.to(
-      socialsRef.current,
-      {
-        translateY: -150,
-        force3D: true,
-      },
-      0,
-    );
-    parallax.to(
-      buttonsRef.current,
-      {
-        translateY: -150,
-        force3D: true,
-      },
-      0,
-    );
-    parallax.to(
-      heroImgRef.current,
-      {
-        translateY: 50,
-        force3D: true,
-      },
-      0,
-    );
-    parallax.to(
-      mainTextRef.current,
-      {
-        translateY: 150,
-        force3D: true,
-      },
-      0,
-    );
   }, []);
+
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+
+      mm.add(
+        {
+          isMobile: "(max-width: 768px)",
+          isDesktop: "(min-width: 769px)",
+        },
+        (context) => {
+          const { isMobile } = context.conditions;
+
+          // DISABLE ON MOBILE: If we are on mobile, stop here.
+          if (isMobile) return; 
+
+          // EVERYTHING BELOW ONLY RUNS ON DESKTOP
+          const parallax = gsap.timeline({
+            scrollTrigger: {
+              trigger: heroSectionRef.current,
+              start: "top top",
+              end: "bottom top",
+              scrub: 0.5,
+            },
+          });
+
+          parallax.to(
+            socialsRef.current,
+            {
+              translateY: -150,
+              force3D: true,
+            },
+            0
+          );
+
+          parallax.to(
+            buttonsRef.current,
+            {
+              translateY: -150,
+              force3D: true,
+            },
+            0
+          );
+
+          parallax.to(
+            heroImgRef.current,
+            {
+              translateY: 50,
+              force3D: true,
+            },
+            0
+          );
+
+          parallax.to(
+            mainTextRef.current,
+            {
+              translateY: 150,
+              force3D: true,
+            },
+            0
+          );
+        }
+      );
+    },
+    { scope: heroSectionRef }
+  );
 
   return (
     <div
