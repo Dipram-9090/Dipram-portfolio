@@ -18,7 +18,7 @@ const Hero = () => {
   const buttonsRef = useRef(null);
   const socialsRef = useRef(null);
   const mainTextRef = useRef(null);
-  /*
+  
   useGSAP(() => {
     // Reduced delay to 0.5s (3s is too long unless you have a loading screen)
     const tl = gsap.timeline({ delay: 2.8 });
@@ -105,7 +105,7 @@ const Hero = () => {
       "-=0.5",
     );
   }, []); 
-*/
+
 
   useGSAP(() => {
     const parallax = gsap.timeline({
