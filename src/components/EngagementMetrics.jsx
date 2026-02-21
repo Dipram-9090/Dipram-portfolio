@@ -72,7 +72,7 @@ export default function EngagementMetrics() {
           className={`px-6 py-2 rounded-full text-base font-euclid uppercase transition-all duration-300 ${
             hasLiked
               ? "bg-[#5043FA]/50 text-gray-200 cursor-not-allowed"
-              : "bg-[#5043FA] text-white hover:bg-gray-800 hover:scale-105 active:scale-95"
+              : "bg-[#5043FA] text-white hover:bg-[#3429c6] hover:scale-105 active:scale-95"
           }`}
         >
           {hasLiked ? (
