@@ -8,6 +8,7 @@ import AnimatedLink from "./animatedLink/AnimatedLink";
 import ContactButton from "../components/ContactButton";
 import DIPRAMbgSVG from "./DIPRAMbgSVG";
 import { ArrowRight } from "lucide-react";
+import EngagementMetrics from "./EngagementMetrics";
 
 const Footer = () => {
   // Added 'transition-colors' for smooth hover effect
@@ -150,7 +151,9 @@ const Footer = () => {
         </div>
       </div>
 
-      <div className="w-full h-full">
+      <div className="relative w-full h-full">
+        {/* Engagement Metrics */}
+      <EngagementMetrics />
         {/* MIDDLE TEXT */}
         <DIPRAMbgSVG
           width="full"

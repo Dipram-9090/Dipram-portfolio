@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useRef } from "react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import EngagementMetrics from "../../../../components/EngagementMetrics";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -177,6 +178,7 @@ const Hero = () => {
       ref={heroSectionRef}
       className="hero-section relative overflow-hidden w-full min-h-screen lg:h-[115vh]"
     >
+      
       <WavyGradient noiseIntensity={4} />
 
       {/* --- Profile Image --- */}

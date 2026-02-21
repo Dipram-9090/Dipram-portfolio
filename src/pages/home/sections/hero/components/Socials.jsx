@@ -54,7 +54,7 @@ const Socials = () => {
           rel="noreferrer" // Good practice for security with target="_blank"
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
-          className="hover:cursor-pointer flex gap-4 px-6 py-2 rounded-full "
+          className="cursor-pointer flex gap-4 px-6 py-2 rounded-full "
         >
           <item.Component />
           <p className="font-euclid text-xl">{item.name}</p>
