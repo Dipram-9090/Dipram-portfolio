@@ -49,7 +49,7 @@ export default function EngagementMetrics() {
   return (
     // 'w-full justify-center' ensures it sits dead center on the page
     // 'flex-wrap' ensures it doesn't break on very small mobile screens
-    <div className="flex flex-row flex-wrap items-center justify-center gap-6 sm:gap-10 w-max rounded-full px-8 py-4 mx-auto lg:mb-12 mb-4">
+    <div className="flex lg:flex-row flex-col flex-wrap items-center justify-center gap-6 sm:gap-10 w-max rounded-full px-8 py-4 mx-auto lg:mb-12 mb-4">
       {/* Visit Counter (Inline) */}
       <div className="flex items-center gap-3">
         <p className="font-euclid font-medium text-black text-base uppercase">
@@ -62,10 +62,11 @@ export default function EngagementMetrics() {
       </div>
 
       {/* Subtle Vertical Divider */}
-      <div className="hidden sm:block rounded-full w-px h-12 bg-black/80"></div>
+      <div className="hidden lg:block rounded-full w-px h-12 bg-black/80"></div>
+      <div className="block lg:hidden rounded-full w-40 h-px bg-black/80"></div>
 
       {/* Like Button & Counter (Inline) */}
-      <div className="flex items-center gap-4">
+      <div className="flex lg:flex-row flex-col items-center lg:gap-4 gap-2">
         <button
           onClick={handleLike}
           disabled={hasLiked}
@@ -88,8 +89,8 @@ export default function EngagementMetrics() {
           )}
         </button>
         <p className="font-euclid font-medium text-gray-600 text-sm">
-          <div className="flex items-center gap-3">
-            <p className="font-bebas text-3xl sm:text-4xl text-black leading-none">
+          <div className="flex lg:flex-row flex-row-reverse items-center gap-3">
+            <p className="font-bebas lg:text-3xl text-4xl text-black leading-none">
               {likes}
             </p>
             <p className="font-euclid font-medium text-black text-base uppercase">
