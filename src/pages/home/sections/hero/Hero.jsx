@@ -6,7 +6,6 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useRef } from "react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import EngagementMetrics from "../../../../components/EngagementMetrics";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -19,6 +18,7 @@ const Hero = () => {
   const buttonsRef = useRef(null);
   const socialsRef = useRef(null);
   const mainTextRef = useRef(null);
+  const wavyGradientRef = useRef(null);
 
   useGSAP(() => {
     // Reduced delay to 0.5s (3s is too long unless you have a loading screen)
@@ -167,6 +167,17 @@ const Hero = () => {
             },
             0
           );
+
+          parallax.to(
+            wavyGradientRef.current, // Target the exposed object
+            {
+              waveHeight: 0.1, // Animate the property!
+              // You can animate ANY property you exposed!
+              // speed: 0.5,
+              // waveAmplitude: 3,
+            },
+            0
+          );
         }
       );
     },
@@ -176,10 +187,15 @@ const Hero = () => {
   return (
     <div
       ref={heroSectionRef}
-      className="hero-section relative overflow-hidden w-full min-h-screen lg:h-[115vh]"
+      className="hero-section relative overflow-hidden w-full min-h-screen lg:h-[115vh] bg-linear-160 from-20% via-60% to-100% from-[#dfddff] via-[#6B64CA] to-[#2115D1]"
     >
       
-      <WavyGradient noiseIntensity={4} />
+      <WavyGradient 
+        ref={wavyGradientRef} // Attach the ref here
+        waveHeight={0.5} 
+        noiseIntensity={4} 
+        className="wavyGradient-class z-0" 
+      />
 
       {/* --- Profile Image --- */}
       <div
@@ -189,7 +205,7 @@ const Hero = () => {
         <img
           src="/img/hero/hero-img.webp"
           alt="Profile Image"
-          className="absolute h-[90vh] md:h-[90vh] lg:h-full object-cover -translate-x-[50%] left-[50%] bottom-0 z-10"
+          className="absolute h-[90vh] md:h-[90vh] lg:h-full object-cover -translate-x-[50%] left-[50%] bottom-0 "
         />
       </div>
 

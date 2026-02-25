@@ -1,62 +1,84 @@
-import { useEffect, useRef } from "react";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { useEffect, useRef, forwardRef, useImperativeHandle } from "react";
 
-const WavyGradient = ({
+const WavyGradient = forwardRef(({
   // COLOR CONTROLS
-  color1 = "#2115D1", // Bottom Color (Deep Blue)
-  color2 = "#6B64CA", // Middle Color (Cyan/Teal)
-  color3 = "#E9E8FD", // Top Color (White)
-
+  color1 = "#2115D1",
+  color2 = "#6B64CA",
+  color3 = "#dfddff",
   // MOTION CONTROLS
-  speed = 1.3,        // Speed of the animation
-  direction = 15,     // Direction in degrees
-  
+  speed = 1.3,
+  direction = 15,
   // WAVE CONTROLS
   waveFrequency = 7.0,
   waveAmplitude = 1.7,
   noiseIntensity = 3,
-}) => {
+  waveHeight = 0.5,
+  // LIGHTING CONTROLS
+  brightness = 1.0,
+  className = "",
+}, ref) => {
   const canvasRef = useRef(null);
+
+  // 1. Create a mutable object holding all variables for WebGL to read
+  const configRef = useRef({
+    color1, color2, color3,
+    speed, direction,
+    waveFrequency, waveAmplitude, noiseIntensity, waveHeight, brightness
+  });
+
+  // 2. Expose this object to the parent component so GSAP can animate it directly
+  useImperativeHandle(ref, () => configRef.current);
+
+  // 3. Keep props synced with the ref just in case they update normally
+  useEffect(() => {
+    configRef.current = { ...configRef.current, color1, color2, color3, speed, direction, waveFrequency, waveAmplitude, noiseIntensity, waveHeight, brightness };
+  }, [color1, color2, color3, speed, direction, waveFrequency, waveAmplitude, noiseIntensity, waveHeight, brightness]);
 
   const hexToRgb = (hex) => {
     const bigint = parseInt(hex.replace("#", ""), 16);
-    const r = ((bigint >> 16) & 255) / 255;
-    const g = ((bigint >> 8) & 255) / 255;
-    const b = (bigint & 255) / 255;
-    return [r, g, b];
+    return [
+      ((bigint >> 16) & 255) / 255,
+      ((bigint >> 8) & 255) / 255,
+      (bigint & 255) / 255
+    ];
   };
+
+  useGSAP(() => {
+    if (!canvasRef.current) return;
+    // Keep the fade-in, but remove the ScrollTrigger from here.
+    gsap.from(canvasRef.current, {
+      autoAlpha: 0,
+      duration: 0.6,
+      ease: "power3.inOut",
+    });
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    
-    // OPTIMIZATION 1: Remove "high-performance" power preference.
-    // Mobiles throttle quickly with high-performance. "default" is much more stable.
+    if (!canvas) return;
+
     const gl = canvas.getContext("webgl", {
       antialias: false,
       alpha: false,
-      powerPreference: "default", 
+      powerPreference: "default",
       preserveDrawingBuffer: false,
     });
 
     if (!gl) return;
 
-    // --- RESIZE HANDLER ---
     const resize = () => {
+      if (typeof window === "undefined") return;
       const realDpr = window.devicePixelRatio || 1;
-      
-      // OPTIMIZATION 2: Cap DPR for mobile.
-      // We limit the multiplier to save battery and GPU heat on high-res phones.
-      // The 0.6 scale serves as a stylistic choice (grain) but also a performance boost.
-      const dpr = Math.min(realDpr, 2.0) * 0.6; 
-      
+      const dpr = Math.min(realDpr, 2.0) * 0.6;
       canvas.width = window.innerWidth * dpr;
       canvas.height = window.innerHeight * dpr;
       gl.viewport(0, 0, canvas.width, canvas.height);
     };
     resize();
-    // Use passive listener for better scroll performance
     window.addEventListener("resize", resize, { passive: true });
 
-    // --- VERTEX SHADER ---
     const vertexShaderSource = `
       attribute vec2 position;
       varying vec2 vUv;
@@ -66,11 +88,7 @@ const WavyGradient = ({
       }
     `;
 
-    // --- FRAGMENT SHADER ---
     const fragmentShaderSource = `
-      // OPTIMIZATION 3: High Precision
-      // 'mediump' causes the "blocks" glitch after time passes because 
-      // the numbers get too big for the GPU to calculate smooth noise.
       #ifdef GL_FRAGMENT_PRECISION_HIGH
         precision highp float;
       #else
@@ -88,6 +106,8 @@ const WavyGradient = ({
       uniform float uWaveFreq;
       uniform float uWaveAmp;
       uniform float uNoiseStr;
+      uniform float uWaveHeight; 
+      uniform float uBrightness;
 
       float hash(vec2 p) {
         return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
@@ -113,53 +133,46 @@ const WavyGradient = ({
 
       void main() {
         vec2 uv = rotate(vUv, uAngle, vec2(0.5));
-
-        // Noise Calculation
         float n = noise(uv * 5.0 + iTime * 0.5);
 
-        // Wave Calculation
-        // We use slightly simpler constants here to ensure mobile stability
         float wave =
           sin(uv.x * (uWaveFreq * 0.4) + iTime * 2.6) * 0.045 * uWaveAmp +
           sin(uv.x * uWaveFreq - iTime * 2.0) * 0.030 * uWaveAmp +
           sin(uv.x * (uWaveFreq * 1.8) + iTime * 3.2 + uv.y * 3.0) * 0.020 * uWaveAmp;
 
-        float gradient = uv.y + wave + (n * 0.08 * uNoiseStr);
+        float gradient = uv.y + wave + (n * 0.08 * uNoiseStr) - (uWaveHeight - 0.5);
 
-        // Clamp and smooth
         gradient = clamp(gradient, 0.0, 1.0);
         gradient = smoothstep(0.0, 1.0, gradient); 
         
-        // --- 3-COLOR MIXING LOGIC ---
         vec3 c1 = mix(uColor1, uColor2, smoothstep(0.0, 0.5, gradient));
         vec3 finalColor = mix(c1, uColor3, smoothstep(0.5, 1.0, gradient));
 
+        finalColor *= uBrightness;
         gl_FragColor = vec4(finalColor, 1.0);
       }
     `;
 
-    // --- COMPILE & LINK ---
     const createShader = (type, src) => {
       const shader = gl.createShader(type);
+      if (!shader) return null;
       gl.shaderSource(shader, src);
       gl.compileShader(shader);
-      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        console.error(gl.getShaderInfoLog(shader));
-        gl.deleteShader(shader);
-        return null;
-      }
+      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) return null;
       return shader;
     };
 
     const program = gl.createProgram();
     const vs = createShader(gl.VERTEX_SHADER, vertexShaderSource);
     const fs = createShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
+
+    if (!vs || !fs) return;
+
     gl.attachShader(program, vs);
     gl.attachShader(program, fs);
     gl.linkProgram(program);
     gl.useProgram(program);
 
-    // --- BUFFERS ---
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
@@ -168,7 +181,6 @@ const WavyGradient = ({
     gl.enableVertexAttribArray(posLoc);
     gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
 
-    // --- UNIFORM LOCATIONS ---
     const locs = {
       time: gl.getUniformLocation(program, "iTime"),
       color1: gl.getUniformLocation(program, "uColor1"),
@@ -178,6 +190,8 @@ const WavyGradient = ({
       freq: gl.getUniformLocation(program, "uWaveFreq"),
       amp: gl.getUniformLocation(program, "uWaveAmp"),
       noise: gl.getUniformLocation(program, "uNoiseStr"),
+      height: gl.getUniformLocation(program, "uWaveHeight"),
+      brightness: gl.getUniformLocation(program, "uBrightness"),
     };
 
     let rafId;
@@ -187,26 +201,25 @@ const WavyGradient = ({
     const render = (now) => {
       if (!isRendering) return;
 
-      const elapsed = (now - startTime) * 0.001 * speed;
+      // 4. Read directly from the configRef! GSAP will magically update these numbers.
+      const c = configRef.current;
+      const elapsed = (now - startTime) * 0.001 * c.speed;
 
-      // Note: We removed the % 1000.0 reset here. 
-      // Because we switched to `highp` in the shader, we don't need to modulo the time manually.
-      // This prevents the animation from "skipping" every 1000 seconds.
       gl.uniform1f(locs.time, elapsed);
-      
-      gl.uniform3fv(locs.color1, hexToRgb(color1));
-      gl.uniform3fv(locs.color2, hexToRgb(color2));
-      gl.uniform3fv(locs.color3, hexToRgb(color3));
-      gl.uniform1f(locs.angle, (direction * Math.PI) / 180);
-      gl.uniform1f(locs.freq, waveFrequency);
-      gl.uniform1f(locs.amp, waveAmplitude);
-      gl.uniform1f(locs.noise, noiseIntensity);
+      gl.uniform3fv(locs.color1, hexToRgb(c.color1));
+      gl.uniform3fv(locs.color2, hexToRgb(c.color2));
+      gl.uniform3fv(locs.color3, hexToRgb(c.color3));
+      gl.uniform1f(locs.angle, (c.direction * Math.PI) / 180);
+      gl.uniform1f(locs.freq, c.waveFrequency);
+      gl.uniform1f(locs.amp, c.waveAmplitude);
+      gl.uniform1f(locs.noise, c.noiseIntensity);
+      gl.uniform1f(locs.height, c.waveHeight);
+      gl.uniform1f(locs.brightness, c.brightness);
 
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       rafId = requestAnimationFrame(render);
     };
 
-    // --- OBSERVER ---
     const observer = new IntersectionObserver(([e]) => {
       if (e.isIntersecting) {
         if (!isRendering) {
@@ -225,23 +238,21 @@ const WavyGradient = ({
       cancelAnimationFrame(rafId);
       observer.disconnect();
       window.removeEventListener("resize", resize);
-      
-      // Cleanup WebGL resources
       gl.deleteProgram(program);
       gl.deleteShader(vs);
       gl.deleteShader(fs);
       gl.deleteBuffer(buffer);
     };
-  }, [color1, color2, color3, speed, direction, waveFrequency, waveAmplitude, noiseIntensity]); 
+  // IMPORTANT: Empty dependency array means WebGL initializes ONCE, saving massive performance.
+  }, []); 
 
   return (
-    <canvas 
-      ref={canvasRef} 
-      className="absolute inset-0 w-full h-full -z-10"
-      // Added pointer-events-none to ensure scrolling on mobile isn't blocked by the canvas
-      style={{ width: "100%", height: "100%", pointerEvents: "none" }} 
+    <canvas
+      ref={canvasRef}
+      className={` ${className} absolute bottom-0 left-0 right-0 w-full h-full`}
+      style={{ width: "100%", height: "100%", pointerEvents: "none" }}
     />
   );
-};
+});
 
 export default WavyGradient;
