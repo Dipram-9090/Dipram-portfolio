@@ -174,7 +174,7 @@ const Hero = () => {
               waveHeight: 0.1, // Animate the property!
               // You can animate ANY property you exposed!
               // speed: 0.5,
-              // waveAmplitude: 3,
+              waveAmplitude: 1,
             },
             0
           );
