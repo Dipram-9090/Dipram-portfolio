@@ -9,14 +9,42 @@ import ContactButton from "../components/ContactButton";
 import DIPRAMbgSVG from "./DIPRAMbgSVG";
 import { ArrowRight } from "lucide-react";
 import EngagementMetrics from "./EngagementMetrics";
+import { useRef } from "react";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const Footer = () => {
-  // Added 'transition-colors' for smooth hover effect
+  const containerRef = useRef(null);
+
+  useGSAP(
+    () => {
+      gsap.from(".dipram-logo-svg path", {
+        y: 100,
+        opacity: 0,
+        stagger: 0.05, 
+        duration: 1,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top 20%", 
+          toggleActions: "play none none reverse",
+        },
+      });
+    },
+    { scope: containerRef }, 
+  );
+
   const navLinkStyles =
     "cursor-pointer font-euclid font-medium text-lg w-full text-left group-hover:text-[#5043FA] transition-colors duration-200";
 
   return (
-    <div className="overflow-hidden bg-[white] pt-10 lg:pt-10 min-h-screen w-full flex flex-col items-center justify-between gap-5 font-euclid text-black">
+    <div
+      ref={containerRef}
+      className="overflow-hidden bg-[white] pt-10 lg:pt-10 min-h-screen w-full flex flex-col items-center justify-between gap-5 font-euclid text-black"
+    >
       {/* TOP SECTION */}
       <div className="flex flex-col lg:flex-row justify-between w-full h-auto lg:h-1/2 gap-12 lg:gap-0 px-5">
         {/* LEFT COLUMN */}
@@ -62,14 +90,13 @@ const Footer = () => {
               Navigation Links
             </h3>
             <div className="flex flex-col gap-2 lg:gap-4">
-              
               {/* LINK 1: Home */}
               {/* Added 'group' here so hovering the container affects both Arrow and Text */}
               <div className="flex gap-2 items-center group cursor-pointer">
-                <ArrowRight 
-                  size={25} 
-                  strokeWidth={2} 
-                  className="text-black group-hover:text-[#5043FA] group-hover:-rotate-45 transition-all duration-200" 
+                <ArrowRight
+                  size={25}
+                  strokeWidth={2}
+                  className="text-black group-hover:text-[#5043FA] group-hover:-rotate-45 transition-all duration-200"
                 />
                 <AnimatedLink to="/" className={navLinkStyles}>
                   Home
@@ -78,9 +105,9 @@ const Footer = () => {
 
               {/* LINK 2: About */}
               <div className="flex gap-2 items-center group cursor-pointer">
-                <ArrowRight 
-                  size={25} 
-                  strokeWidth={2} 
+                <ArrowRight
+                  size={25}
+                  strokeWidth={2}
                   className="text-black group-hover:text-[#5043FA] group-hover:-rotate-45 transition-all duration-200"
                 />
                 <AnimatedLink to="/about" className={navLinkStyles}>
@@ -90,9 +117,9 @@ const Footer = () => {
 
               {/* LINK 3: Services */}
               <div className="flex gap-2 items-center group cursor-pointer">
-                <ArrowRight 
-                  size={25} 
-                  strokeWidth={2} 
+                <ArrowRight
+                  size={25}
+                  strokeWidth={2}
                   className="text-black group-hover:text-[#5043FA] group-hover:-rotate-45 transition-all duration-200"
                 />
                 <AnimatedLink to="/services" className={navLinkStyles}>
@@ -102,9 +129,9 @@ const Footer = () => {
 
               {/* LINK 4: Projects */}
               <div className="flex gap-2 items-center group cursor-pointer">
-                <ArrowRight 
-                  size={25} 
-                  strokeWidth={2} 
+                <ArrowRight
+                  size={25}
+                  strokeWidth={2}
                   className="text-black group-hover:text-[#5043FA] group-hover:-rotate-45 transition-all duration-200"
                 />
                 <ProjectsButton className={navLinkStyles} />
@@ -112,9 +139,9 @@ const Footer = () => {
 
               {/* LINK 5: Contact */}
               <div className="flex gap-2 items-center group cursor-pointer">
-                <ArrowRight 
-                  size={25} 
-                  strokeWidth={2} 
+                <ArrowRight
+                  size={25}
+                  strokeWidth={2}
                   className="text-black group-hover:text-[#5043FA] group-hover:-rotate-45 transition-all duration-200"
                 />
                 <ContactButton className={navLinkStyles}>Contact</ContactButton>
@@ -153,12 +180,12 @@ const Footer = () => {
 
       <div className="relative w-full h-full">
         {/* Engagement Metrics */}
-      <EngagementMetrics />
+        <EngagementMetrics />
         {/* MIDDLE TEXT */}
         <DIPRAMbgSVG
           width="full"
           height="full"
-          className="px-5 pb-5 hidden lg:block"
+          className="dipram-logo-svg px-5 pb-5 hidden lg:block"
         />
 
         {/* BOTTOM COPYRIGHT TEXT */}

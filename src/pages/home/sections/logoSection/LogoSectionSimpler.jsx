@@ -16,6 +16,7 @@ gsap.registerPlugin(ScrollTrigger);
 const LogoSectionSimpler = () => {
   const containerRef = useRef(null);
   const gridRef = useRef(null);
+  const textRef = useRef(null);
 
   // 1. STATE TO TRACK SCREEN SIZE
   const [viewport, setViewport] = useState("desktop");
@@ -58,7 +59,6 @@ const LogoSectionSimpler = () => {
     { Component: CodeverseLogo, ...getSize(500, 300) },
     { Component: DipramLogo, ...getSize(500, 300) },
     { Component: JugsLogo, ...getSize(500, 150) },
-    
   ];
 
   useGSAP(
@@ -70,19 +70,38 @@ const LogoSectionSimpler = () => {
         items,
         {
           opacity: 0,
-          scale: 0.8,
           filter: "blur(10px)",
         },
         {
           opacity: 1,
-          scale: 1,
           filter: "blur(0px)",
-          duration: 0.8,
-          stagger: 0.1, // Logos appear one after another
+          duration: 0.7,
+          // stagger: 0.1, // Logos appear one after another
           ease: "power2.out",
           scrollTrigger: {
             trigger: gridRef.current,
-            start: "top 90%", // Animation starts when grid enters viewport
+            start: "top 60%", // Animation starts when grid enters viewport
+            toggleActions: "play none none reverse",
+          },
+        },
+      );
+
+      gsap.fromTo(
+        textRef.current,
+        {
+          autoAlpha: 0,
+          filter: "blur(10px)",
+        },
+        {
+          autoAlpha: 1,
+          filter: "blur(0px)",
+
+          duration: 0.7,
+          ease: "power2.inOut",
+          scrollTrigger: {
+            trigger: textRef.current,
+            start: "top 80%", // Animation starts when grid enters viewport
+            toggleActions: "play none none reverse",
           },
         },
       );
@@ -97,7 +116,10 @@ const LogoSectionSimpler = () => {
     >
       {/* --- HEADER --- */}
       <div className="flex flex-col items-center text-center gap-4 z-10">
-        <p className="font-euclid text-lg md:text-lg lg:text-xl text-white max-w-2xl leading-relaxed">
+        <p
+          ref={textRef}
+          className="font-euclid text-lg md:text-lg lg:text-xl text-white max-w-2xl leading-relaxed"
+        >
           A curated collection of logos crafted with strong concepts, clean
           geometry, and memorable brand identity. Every design begins with
           strategy and evolves into a simple, distinctive symbol that represents
