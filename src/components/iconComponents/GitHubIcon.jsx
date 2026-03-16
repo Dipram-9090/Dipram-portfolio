@@ -1,4 +1,4 @@
-const GitHubIcon = ({ color = "currentColor", size }) => {
+const GitHubIcon = ({ color = "currentColor", size = 28 }) => {
   return (
     <div>
       <svg

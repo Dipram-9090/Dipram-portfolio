@@ -3,15 +3,16 @@ import gsap from "gsap";
 
 import LinkedInIcon from "../../../../../components/iconComponents/LinkedInIcon";
 import BehanceIcon from "../../../../../components/iconComponents/BehanceIcon";
+import GitHubIcon from "../../../../../components/iconComponents/GitHubIcon";
 
 const Socials = () => {
   // 1. Define your data here
   const socialData = [
-    // {
-    //   Component: "Twitter",
-    //   url: "#",
-    //   icon: "/svg/hero/bi_twitter-x.svg",
-    // },
+    {
+      name: "GitHub",
+      Component: GitHubIcon,
+      url: "https://github.com/Dipram-9090",
+    },
     {
       name: "LinkedIn",
       Component: LinkedInIcon,
