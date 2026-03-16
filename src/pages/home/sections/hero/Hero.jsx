@@ -220,8 +220,8 @@ const Hero = () => {
             ref={titleRef}
             className="flex md:flex-row items-start md:items-start justify-between w-full font-euclid font-medium text-base md:text-xl lg:text-[1.8vw] uppercase text-white"
           >
-            <p className="text-left ">Graphic Designer</p>
-            <p className="text-right ">UI/UX Designer</p>
+            <p className="text-left">Creative Frontend <br /> Developer </p>
+            <p className="text-right">UI/UX Designer <br /> Graphic Designer </p>
           </div>
         </div>
       </div>

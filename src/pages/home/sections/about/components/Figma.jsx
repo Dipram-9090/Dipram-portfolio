@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Figma = ({size = 80}) => {
+const Figma = ({size = 50}) => {
   return (
     <div>
       <svg

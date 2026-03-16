@@ -1,6 +1,6 @@
 import React from 'react'
 
-const AdobeIllustratorIcon = ({size = 80}) => {
+const AdobeIllustratorIcon = ({size = 50}) => {
   return (
     <div>
       <svg

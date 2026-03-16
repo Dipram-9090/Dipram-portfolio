@@ -10,7 +10,7 @@ import Call from "../iconComponents/Call";
 import ProjectsButton from "../ProjectsButton";
 import ContactButton from "../ContactButton";
 import AnimatedLink from "../animatedLink/AnimatedLink";
-import BurgerMenu from "./burgerMenu/BurgerMenu"; // Fixed typo in path
+import BurgerMenu from "./burgerMenu/BurgerMenu";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -46,27 +46,7 @@ const Navbar = () => {
       // Cleanup for this specific media query
       return () => trigger.kill();
     });
-  }, [location.pathname]);
-  // useGSAP(() => {
-  //   let lastDirection = -1;
-  //   const trigger = ScrollTrigger.create({
-  //     trigger: document.body,
-  //     start: 0,
-  //     end: "max",
-  //     onUpdate: (self) => {
-  //       // Only animate if direction changes
-  //       if (self.direction !== lastDirection) {
-  //         lastDirection = self.direction;
-  //         gsap.to(navRef.current, {
-  //           yPercent: self.direction === 1 ? -100 : 0,
-  //           duration: 0.3,
-  //           ease: "power2.out",
-  //         });
-  //       }
-  //     },
-  //     invalidateOnRefresh: true,
-  //   });
-  // }, [location.pathname]);
+  }, []);
 
   // --- GSAP Animation: Background Color Change ---
   useGSAP(() => {
@@ -93,11 +73,6 @@ const Navbar = () => {
     return () => trigger.kill();
   }, []);
 
-  // const navLinks = [
-  //   { path: "/", label: "Home" },
-  //   { path: "/about", label: "About" },
-  //   { path: "/services", label: "Services" },
-  // ];
 
   const navLinkStyles =
     "cursor-pointer w-32 font-euclid text-base py-1 rounded-full text-center uppercase";

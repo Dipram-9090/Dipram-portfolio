@@ -11,6 +11,23 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { useRef } from "react";
 import LearnMore from "../../../../components/LearnMore.jsx";
+import HTML5icon from "../../../../components/iconComponents/HTML5icon.jsx";
+import CSS3icon from "../../../../components/iconComponents/CSS3icon.jsx";
+import JSIcon from "../../../../components/iconComponents/JSIcon.jsx";
+import TailwindIcon from "../../../../components/iconComponents/TailwindIcon.jsx";
+import ReactIcon from "../../../../components/iconComponents/ReactIcon.jsx";
+import NextjsIcon from "../../../../components/iconComponents/NextjsIcon.jsx";
+import SCSSicon from "../../../../components/iconComponents/SCSSicon.jsx";
+import GSAPicon from "../../../../components/iconComponents/GSAPicon.jsx";
+import MotionIcon from "../../../../components/iconComponents/MotionIcon.jsx";
+import VSicon from "../../../../components/iconComponents/VSicon.jsx";
+import AntiGravityIcon from "../../../../components/iconComponents/AntiGravity.jsx";
+import VercelIcon from "../../../../components/iconComponents/VercelIcon.jsx";
+import NPMicon from "../../../../components/iconComponents/NPMicon.jsx";
+import GitIcon from "../../../../components/iconComponents/GitIcon.jsx";
+import GitHubIcon from "../../../../components/iconComponents/GitHubIcon.jsx";
+import WebflowIcon from "../../../../components/iconComponents/WebflowIcon.jsx";
+import FramerIcon from "../../../../components/iconComponents/FramerIcon.jsx";
 
 gsap.registerPlugin(SplitText, ScrollTrigger);
 
@@ -19,6 +36,8 @@ const AboutPreview = () => {
   const iconRef = useRef(null);
   const buttonRef = useRef(null);
   const toolRef = useRef(null);
+  const techStackRef = useRef(null);
+  const techIconRef = useRef(null);
 
   useGSAP(
     () => {
@@ -47,7 +66,7 @@ const AboutPreview = () => {
               // Mobile: Trigger earlier (top 70%) so user sees it sooner
               // Desktop: Trigger later (top 60%) for that "reveal" feel
               start: isMobile ? "top 70%" : "top 60%",
-              end: isMobile ? "bottom 50%" : "80% 40%",
+              end: isMobile ? "bottom 90%" : "80% 80%",
               scrub: 0.05,
               toggleActions: "play reverse play reverse",
             },
@@ -63,6 +82,19 @@ const AboutPreview = () => {
           gsap.from([toolRef.current, iconRef.current], {
             scrollTrigger: {
               trigger: toolRef.current,
+              start: isMobile ? "top 80%" : "top 70%",
+              toggleActions: "play none none reverse", // OPTIMIZATION: Don't scrub simple fades. Just play them.
+            },
+            // y: 50,
+            opacity: 0,
+            ease: "power2.out",
+            duration: 1,
+            // stagger: 0.1,
+          });
+
+          gsap.from([techStackRef.current, techIconRef.current], {
+            scrollTrigger: {
+              trigger: techStackRef.current,
               start: isMobile ? "top 80%" : "top 70%",
               toggleActions: "play none none reverse", // OPTIMIZATION: Don't scrub simple fades. Just play them.
             },
@@ -97,45 +129,11 @@ const AboutPreview = () => {
     },
     { scope: scrollRef },
   );
-  /*
-  useGSAP(
-    () => {
-      // 1. SPLIT TEXT
-      // Revert logic is handled automatically by useGSAP, but scoping helps cleanliness
-      const split = new SplitText(".scrollAnimate", {
-        type: "words", // OPTIMIZATION: Use 'words' instead of 'chars' for 5x better performance
-      });
-
-      // 2. TIMELINE
-      // Combining these into a timeline is cleaner and more performant than separate triggers
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: scrollRef.current,
-          start: "top 60%",
-          end: "bottom 80%", // Adjusted end for better pacing
-          scrub: 1, // OPTIMIZATION: Use a number (e.g., 1) to smooth out the jitter
-        },
-      });
-
-      tl.from(split.words, {
-        opacity: 0,
-        y: 30, // OPTIMIZATION: Use Translate Y instead of Blur
-        // filter: "blur(4px)", // <--- THIS WAS THE LAG KILLER. REMOVED.
-        stagger: 0.05, // Faster stagger for words
-        ease: "power2.out",
-        duration: 0.5, // Explicit duration helps GSAP calculate logic
-      });
-
-      
-    },
-    { scope: scrollRef },
-  ); // Correct usage of scope
-  */
 
   return (
     <div
       ref={scrollRef}
-      className="bg-[#131313] relative z-0 flex flex-col justify-center gap-10 w-full lg:h-[140vh] lg:mt-30 mt-20 md:px-16 lg:px-40 px-6 lg:py-0 md:py-40 py-40"
+      className="bg-[#131313] relative z-0 flex flex-col justify-center gap-15 w-full lg:mt-30 mt-20 md:px-16 lg:px-40 px-6 lg:pb-50 md:py-40 py-40"
     >
       {/* Content */}
       <div className="flex flex-col gap-6 items-start lg:items-end justify-center">
@@ -146,7 +144,12 @@ const AboutPreview = () => {
             {" "}
             multidisciplinary designer{" "}
           </span>{" "}
-          and focused on building{" "}
+          and
+          <span className="text-[#19E6B6]">
+            {" "}
+            creative front-end developer{" "}
+          </span>{" "}
+          focused on building{" "}
           <span className="text-[#19E6B6]">
             {" "}
             visually strong, interactive digital experiences.
@@ -154,25 +157,70 @@ const AboutPreview = () => {
         </h1>
 
         <p className="scrollAnimate font-euclid text-base text-[#bfbfbf] md:text-lg w-full text-left lg:text-xl lg:text-white lg:text-right lg:w-[50%] will-change-transform">
-          I combine design systems, UI/UX thinking, and strong visual
-          foundations to create experiences that are engaging, consistent, and
-          thoughtfully designed.
+          I combine design systems, UI/UX thinking, brand-driven visuals, and
+          motion-focused front-end development to craft experiences that are
+          immersive, engaging, and built with long-term clarity and usability in
+          mind.
         </p>
       </div>
 
       {/* Tools */}
-      <div className="flex flex-col gap-6 justify-center items-start lg:items-end">
+      <div className="flex flex-col gap-5 justify-center items-start lg:items-end">
         <h1
           ref={toolRef}
           className="font-bebas text-white text-4xl text-left lg:text-6xl lg:text-right"
         >
-          TOOLS
+          DESIGN TOOLS
         </h1>
-        <div ref={iconRef} className="icons flex gap-4 flex-wrap lg:gap-6">
-          <Figma />
-          <AdobeIllustratorIcon />
-          <CanvaIcon />
-          <PhotoshopIcon />
+        <div ref={iconRef} className="icons flex items-center gap-4 flex-wrap lg:gap-6">
+          <Figma size={50} />
+          <AdobeIllustratorIcon size={50} />
+          <CanvaIcon size={50} />
+          <PhotoshopIcon size={50} />
+          <WebflowIcon color="white" size={50} />
+          <FramerIcon color="white" size={50} />
+        </div>
+      </div>
+      <div className="flex flex-col gap-5 justify-center items-start lg:items-end">
+        <h1
+          ref={techStackRef}
+          className="font-bebas text-white text-4xl text-left lg:text-6xl lg:text-right"
+        >
+          Frontend Tech Stack
+        </h1>
+        <div
+          ref={techIconRef}
+          className="icons  flex lg:justify-end flex-wrap gap-y-5 gap-x-10 lg:gap-y-4 lg:gap-x-15"
+        >
+          <div className="flex items-center gap-4 lg:gap-6">
+            <HTML5icon color="white" size={50} />
+            <CSS3icon color="white" size={50} />
+            <JSIcon color="white" size={50} />
+          </div>
+          <div className="flex gap-4 lg:gap-6 items-center">
+            <TailwindIcon color="white" size={40} />
+            <SCSSicon color="white" size={50} />
+          </div>
+          <div className="flex gap-4 lg:gap-6 items-center">
+            <GSAPicon color="white" size={25} />
+            <MotionIcon color="white" size={25} />
+          </div>
+          <div className="flex gap-4 lg:gap-6 items-center">
+            <ReactIcon color="white" size={50} />
+            <NextjsIcon color="white" size={50} />
+          </div>
+          <div className="flex gap-4 lg:gap-6 items-center">
+            <GitIcon color="white" size={50} />
+            <GitHubIcon color="white" size={50} />
+          </div>
+          <div className="flex gap-4 lg:gap-6 items-center">
+            <VSicon color="white" size={50} />
+            <AntiGravityIcon color="white" size={50} />
+            <NPMicon color="white" size={50} />
+          </div>
+          <div className="flex gap-4 lg:gap-6 items-center">
+            <VercelIcon size={50} />
+          </div>
         </div>
       </div>
 

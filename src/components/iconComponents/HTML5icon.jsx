@@ -1,0 +1,19 @@
+const HTML5icon = ({ color = "currentColor", size }) => {
+  return (
+    <div>
+      <svg
+        width={(size * 18) / 20}
+        height={size}
+        viewBox="0 0 18 20"
+        fill={color}
+      >
+        <path
+          d="M9 16.178L13.62 14.922L14.243 8.144H6.026L5.822 5.89H14.448L14.675 3.679H3.325L3.961 10.357H11.781L11.52 13.223L9 13.89L6.48 13.223L6.322 11.379H4.052L4.381 14.923L9 16.178ZM0 0H18L16.377 18L9 20L1.623 18L0 0Z"
+          fill={color}
+        />
+      </svg>
+    </div>
+  );
+};
+
+export default HTML5icon;
