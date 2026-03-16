@@ -120,7 +120,7 @@ const Hero = () => {
           const { isMobile } = context.conditions;
 
           // DISABLE ON MOBILE: If we are on mobile, stop here.
-          if (isMobile) return; 
+          if (isMobile) return;
 
           // EVERYTHING BELOW ONLY RUNS ON DESKTOP
           const parallax = gsap.timeline({
@@ -135,19 +135,19 @@ const Hero = () => {
           parallax.to(
             socialsRef.current,
             {
-              translateY: -150,
+              translateY: -100,
               force3D: true,
             },
-            0
+            0,
           );
 
           parallax.to(
             buttonsRef.current,
             {
-              translateY: -150,
+              translateY: -100,
               force3D: true,
             },
-            0
+            0,
           );
 
           parallax.to(
@@ -156,46 +156,38 @@ const Hero = () => {
               translateY: 50,
               force3D: true,
             },
-            0
+            0,
           );
 
           parallax.to(
             mainTextRef.current,
             {
-              translateY: 150,
+              translateY: 100,
               force3D: true,
             },
-            0
+            0,
           );
 
           parallax.to(
-            wavyGradientRef.current, // Target the exposed object
+            ".wavyGradient-class",
             {
-              waveHeight: 0.1, // Animate the property!
-              // You can animate ANY property you exposed!
-              // speed: 0.5,
-              waveAmplitude: 1,
+              translateY: 500,
+              force3D: true,
             },
-            0
+            0,
           );
-        }
+        },
       );
     },
-    { scope: heroSectionRef }
+    { scope: heroSectionRef },
   );
 
   return (
     <div
       ref={heroSectionRef}
-      className="hero-section relative overflow-hidden w-full min-h-screen lg:h-[115vh] bg-linear-160 from-20% via-60% to-100% from-[#dfddff] via-[#6B64CA] to-[#2115D1]"
+      className="hero-section relative overflow-hidden w-full min-h-screen lg:h-[115vh] bg-[#dfddff]"
     >
-      
-      <WavyGradient 
-        ref={wavyGradientRef} // Attach the ref here
-        waveHeight={0.5} 
-        noiseIntensity={4} 
-        className="wavyGradient-class z-0" 
-      />
+      <WavyGradient ref={wavyGradientRef} noiseIntensity={4} className=" z-0" />
 
       {/* --- Profile Image --- */}
       <div

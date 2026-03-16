@@ -68,8 +68,8 @@ const AboutPreview = () => {
             },
             // y: 50,
             opacity: 0,
-            ease: "power3.out",
-            duration: 0.8,
+            ease: "power2.out",
+            duration: 1,
             // stagger: 0.1,
           });
 
@@ -82,8 +82,8 @@ const AboutPreview = () => {
             },
             // y: 30,
             opacity: 0,
-            ease: "power3.out",
-            duration: 0.8,
+            ease: "power2.out",
+            duration: 1,
           });
 
           // 3. CLEANUP

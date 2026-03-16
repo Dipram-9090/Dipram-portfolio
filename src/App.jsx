@@ -95,7 +95,7 @@ const App = () => {
     <ReactLenis
       root
       options={{
-        easing: (t) => 1 - Math.pow(1 - t, 3), // Cubic easing for a smooth stop
+        easing: (t) => 1 - Math.pow(1 - t, 3), 
         duration: 1.5,
         smoothWheel: true,
         smoothTouch: true,
