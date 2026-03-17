@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -13,7 +13,7 @@ const websitesData = [
     description:
       "A collaborative high-performance hackathon website. I led the implementation of complex, motion-driven interactions—alongside UI/UX and front-end development—bringing the interface to life while ensuring performance, responsiveness, and a smooth user experience across heavy visual assets.",
     techStack: ["React", "Tailwind CSS", "GSAP", "Motion", "Lenis"],
-    videoSrc: "/videos/synchronicity-website.webm", // Put your screen recordings in public/videos/
+    videoSrc: "/videos/synchronicity-website.webm", 
     liveLink: "https://synchronicity.ju-acm.com/home",
     githubLink:
       "https://github.com/JU-ACM/Syncronicity-2026/pulse?period=monthly",
@@ -33,6 +33,32 @@ const websitesData = [
 // 2. Extracted Sub-component for individual GSAP scoping
 const WebsiteRow = ({ item }) => {
   const containerRef = useRef(null);
+  
+  // ADDED: State and Ref for Lazy Loading Video
+  const [isVideoVisible, setIsVideoVisible] = useState(false);
+  const videoWrapperRef = useRef(null);
+
+  // ADDED: Intersection Observer Logic
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // If the video container comes within 200px of the viewport, render the video
+        if (entries[0].isIntersecting) {
+          setIsVideoVisible(true);
+          observer.disconnect(); // Stop observing once it's loaded
+        }
+      },
+      {
+        rootMargin: "200px", // Loads slightly before the user scrolls to it
+      }
+    );
+
+    if (videoWrapperRef.current) {
+      observer.observe(videoWrapperRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   useGSAP(
     () => {
@@ -62,10 +88,10 @@ const WebsiteRow = ({ item }) => {
             duration: 1.2,
             ease: "power3.out",
           },
-          "-=0.8",
+          "-=0.8"
         );
     },
-    { scope: containerRef },
+    { scope: containerRef }
   );
 
   return (
@@ -97,7 +123,6 @@ const WebsiteRow = ({ item }) => {
 
         {/* Action Buttons */}
         <div className="anim-web-text flex flex-wrap justify-center gap-4 mt-8 w-full sm:w-auto">
-          {/* Styled like LearnMore */}
           <a
             href={item.liveLink}
             target="_blank"
@@ -107,7 +132,6 @@ const WebsiteRow = ({ item }) => {
             Live Website
           </a>
 
-          {/* Styled like ProjectsButton */}
           <a
             href={item.githubLink}
             target="_blank"
@@ -130,16 +154,21 @@ const WebsiteRow = ({ item }) => {
             <div className="w-3 h-3 rounded-full bg-[#27C93F]"></div>
           </div>
 
-          {/* The Screen Recording Video */}
-          <div className="relative w-full aspect-80/39 bg-black">
-            <video
-              src={item.videoSrc}
-              autoPlay
-              muted
-              loop
-              playsInline
-              className="absolute inset-0 w-full h-full object-cover"
-            />
+          {/* ADDED: ref={videoWrapperRef} to track intersection */}
+          <div ref={videoWrapperRef} className="relative w-full aspect-80/39 bg-black">
+            
+            {/* ADDED: Conditional rendering so it only mounts when near the viewport */}
+            {isVideoVisible && (
+              <video
+                src={item.videoSrc}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            )}
+            
           </div>
         </div>
       </div>

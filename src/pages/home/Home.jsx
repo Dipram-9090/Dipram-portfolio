@@ -9,17 +9,21 @@ import IndiProjectSection from "../../components/indiProjectSection/IndiProjectS
 
 import { useLocation } from "react-router-dom";
 import { useLenis } from "lenis/react";
-import { useEffect, lazy, Suspense } from "react";
+import React, { useEffect, Suspense } from "react";
+import Loader from "../../components/Loader";
 import Footer from "../../components/Footer";
 import Contact from "./sections/contact/Contact";
 import LogoSectionSimpler from "./sections/logoSection/LogoSectionSimpler";
 import LogoSectionDesktop from "./sections/logoSection/LogoSectionDestop";
-import PosterSection from "./sections/posterSection/PosterSection";
+// import PosterSection from "./sections/posterSection/PosterSection";
 // import WebsitesSection from "./sections/websites/WebsitesSections";
-const WebsitesSection = lazy(
+const WebsitesSection = React.lazy(
   () => import("./sections/websites/WebsitesSections"),
 );
-import Loading from './Loading.js';
+const PosterSection = React.lazy(
+  () => import("./sections/posterSection/PosterSection"),
+);
+// import Loading from './Loading.js';
 
 const Home = () => {
   const location = useLocation();
@@ -125,12 +129,14 @@ const Home = () => {
         </div>
       </div>
 
-      <div className=" w-full ">
-        <PosterSection />
-        <div className="flex justify-end w-full ">
-          <MarqueeWhite />
+      <Suspense fallback={<Loader fullScreen="true" />}>
+        <div className=" w-full ">
+          <PosterSection />
+          <div className="flex justify-end w-full ">
+            <MarqueeWhite />
+          </div>
         </div>
-      </div>
+      </Suspense>
 
       {/* Websites */}
       <div className="w-full overflow-hidden">
@@ -140,7 +146,7 @@ const Home = () => {
         </div>
       </div>
 
-      <Suspense fallback={<Loading />}>
+      <Suspense fallback={<Loader fullScreen="true" />}>
         <div className=" w-full ">
           <WebsitesSection />
           <div className="flex justify-end w-full ">

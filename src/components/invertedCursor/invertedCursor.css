@@ -12,7 +12,7 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 5000;
+  z-index: 999999;
   pointer-events: none; /* Allows clicks to pass through */
 
   /* Centers the cursor on the mouse coordinates */

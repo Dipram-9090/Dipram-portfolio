@@ -146,7 +146,7 @@ const Transition = ({ children }) => {
   return (
     <div ref={containerRef} className="relative w-full h-full">
       {/* transition overlay */}
-      <div className="transition-overlay fixed top-0 left-0 w-screen h-screen z-9999 pointer-events-auto">
+      <div className="transition-overlay fixed top-0 left-0 w-screen h-screen z-99999 pointer-events-auto">
         {/* Exit layer div */}
         <div className="exit-layer1 absolute top-0 left-0 w-full h-full z-10 ">
           <svg

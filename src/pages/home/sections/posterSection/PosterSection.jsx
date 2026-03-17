@@ -1,11 +1,11 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// 1. Mock Data Structure (Updated: 'mockups' is now an array)
+// 1. Mock Data Structure
 const postersData = [
   {
     id: 1,
@@ -17,7 +17,6 @@ const postersData = [
       "/img/posters/poster-1-mockup-1.webp",
       "/img/posters/poster-1-mockup-2.webp",
       "/img/posters/poster-1-mockup-3.webp",
-      // You can add as many as you want here!
     ],
   },
   {
@@ -35,6 +34,44 @@ const postersData = [
   },
 ];
 
+// --- ADDED: Reusable LazyImage Component ---
+const LazyImage = ({ src, alt, className }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const imgRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "250px" } // Load the image just before it enters the screen
+    );
+
+    if (imgRef.current) {
+      observer.observe(imgRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    // We keep the wrapper div rendered so the layout doesn't jump.
+    // The actual <img> tag only mounts when `isVisible` is true.
+    <div ref={imgRef} className={`w-full h-full bg-[#1e1e1e] ${className || ''}`}>
+      {isVisible && (
+        <img
+          src={src}
+          alt={alt}
+          className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+        />
+      )}
+    </div>
+  );
+};
+
 // 2. Extracted Sub-component
 const PosterRow = ({ item }) => {
   const containerRef = useRef(null);
@@ -51,7 +88,6 @@ const PosterRow = ({ item }) => {
         },
       });
 
-      // Stagger the text in first
       tl.from(".anim-text", {
         x: -100,
         opacity: 0,
@@ -59,7 +95,6 @@ const PosterRow = ({ item }) => {
         stagger: 0.15,
         ease: "power3.out",
       })
-        // Bring in the main poster overlapping the text
         .from(
           ".anim-poster",
           {
@@ -68,19 +103,17 @@ const PosterRow = ({ item }) => {
             duration: 1.2,
             ease: "power3.out",
           },
-          "<+=0.2",
+          "<+=0.2"
         );
 
       // --- 2. INDIVIDUAL MOCKUP ANIMATIONS (Right Side) ---
-      // Select all elements with the class 'anim-mockup' inside THIS specific row
       const mockups = gsap.utils.toArray(".anim-mockup");
 
-      // Loop through each one and give it its own ScrollTrigger
       mockups.forEach((mockup) => {
         gsap.from(mockup, {
           scrollTrigger: {
-            trigger: mockup, // The trigger is the image itself, not the parent container
-            start: "top 80%", // Animates when the top of THIS specific image hits 80% of viewport
+            trigger: mockup,
+            start: "top 80%",
             toggleActions: "play none none reverse",
           },
           x: 100,
@@ -103,7 +136,7 @@ const PosterRow = ({ item }) => {
         });
       });
     },
-    { scope: containerRef },
+    { scope: containerRef }
   );
 
   return (
@@ -126,28 +159,27 @@ const PosterRow = ({ item }) => {
           </p>
         </div>
 
-        {/* COLUMN 2: Main Poster */}
-        <div className="flex items-center justify-center w-full">
-          <img
-            src={item.mainPoster}
-            alt={item.title}
-            className="anim-poster max-h-[85vh] max-w-full object-contain shadow-2xl shadow-black/50"
-          />
+        {/* COLUMN 2: Main Poster (Now Lazy Loaded) */}
+        <div className="flex items-center justify-center w-full anim-poster">
+           <LazyImage 
+              src={item.mainPoster} 
+              alt={item.title} 
+              // Overriding the default hover:scale from LazyImage for the main poster
+              className="max-h-[85vh] max-w-full object-contain shadow-2xl shadow-black/50 bg-transparent [&>img]:hover:scale-100" 
+           />
         </div>
       </div>
 
-      {/* COLUMN 3: Scrollable Mockups (MAPPED) */}
+      {/* COLUMN 3: Scrollable Mockups (Now Lazy Loaded) */}
       <div className="flex flex-col items-center w-full gap-8 pt-4 pb-12 lg:col-span-1 lg:gap-12 lg:pt-24">
-        {/* Map through the mockups array */}
         {item.mockups.map((imgSrc, index) => (
           <div
             key={index}
             className="anim-mockup w-full max-w-md bg-[#1e1e1e] rounded-xl overflow-hidden shadow-lg"
           >
-            <img
-              src={imgSrc}
-              alt={`${item.title} Mockup ${index + 1}`}
-              className="object-cover w-full transition-transform duration-500 hover:scale-105"
+            <LazyImage 
+              src={imgSrc} 
+              alt={`${item.title} Mockup ${index + 1}`} 
             />
           </div>
         ))}
