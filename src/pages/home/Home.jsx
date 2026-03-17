@@ -15,6 +15,7 @@ import Contact from "./sections/contact/Contact";
 import LogoSectionSimpler from "./sections/logoSection/LogoSectionSimpler";
 import LogoSectionDesktop from "./sections/logoSection/LogoSectionDestop";
 import PosterSection from "./sections/posterSection/PosterSection";
+import WebsitesSection from "./sections/websites/WebsitesSections";
 
 const Home = () => {
   const location = useLocation();
@@ -90,7 +91,7 @@ const Home = () => {
 
       {/* Logofolio */}
       <div className="w-full overflow-hidden">
-      <IndiProjectSection text="Logofolio" />
+        <IndiProjectSection text="Logofolio" />
         <div className="flex justify-start w-full ">
           <MarqueeBlue />
         </div>
@@ -114,7 +115,7 @@ const Home = () => {
 
       {/* Posters */}
       <div className="w-full overflow-hidden">
-      <IndiProjectSection text="Posters" />
+        <IndiProjectSection text="Posters" />
         <div className="flex justify-start w-full ">
           <MarqueeBlue />
         </div>
@@ -122,6 +123,21 @@ const Home = () => {
 
       <div className=" w-full ">
         <PosterSection />
+        <div className="flex justify-end w-full ">
+          <MarqueeWhite />
+        </div>
+      </div>
+
+      {/* Websites */}
+      <div className="w-full overflow-hidden">
+        <IndiProjectSection text="Websites" />
+        <div className="flex justify-start w-full ">
+          <MarqueeBlue />
+        </div>
+      </div>
+
+      <div className=" w-full ">
+        <WebsitesSection />
         <div className="flex justify-end w-full ">
           <MarqueeWhite />
         </div>
