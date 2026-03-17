@@ -1,11 +1,10 @@
-import React, { useRef, useState, useEffect, memo, useMemo } from "react";
+import React, { useRef, useMemo, memo } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Static data outside component — never triggers re-renders
 const postersData = [
   {
     id: 1,
@@ -34,18 +33,6 @@ const postersData = [
   },
 ];
 
-/**
- * LazyImage — shared utility component
- *
- * OPTIMIZATION NOTES:
- * 1. Uses native loading="lazy" + decoding="async" — browser-native, zero JS,
- *    offloads decode to a worker thread so it never blocks the main thread.
- * 2. IntersectionObserver removed — redundant when loading="lazy" is present.
- * 3. contain: "layout paint" on wrapper prevents layout recalc when image loads.
- * 4. will-change: transform only injected on hover via CSS, not permanently —
- *    permanent will-change promotes to its own compositor layer wasting GPU RAM.
- * 5. memo() — prevents re-render when parent PosterRow re-renders.
- */
 const LazyImage = memo(({ src, alt, className = "" }) => (
   <div
     className={`w-full h-full bg-[#1e1e1e] ${className}`}
@@ -60,29 +47,44 @@ const LazyImage = memo(({ src, alt, className = "" }) => (
     />
   </div>
 ));
-
 LazyImage.displayName = "LazyImage";
 
-/**
- * PosterRow
- *
- * OPTIMIZATION NOTES:
- * 1. Merged the two separate animation blocks (text + mockups) into ONE
- *    ScrollTrigger timeline per row — halves the number of ScrollTrigger
- *    instances and reduces the per-frame listener count.
- * 2. gsap.matchMedia() instance is returned from useGSAP's cleanup function
- *    so it's properly reverted when the component unmounts, preventing a
- *    ScrollTrigger memory leak that existed in the original.
- * 3. Mockup animation uses a single ScrollTrigger per row (not per mockup) —
- *    stagger handles sequencing, saving N-1 IntersectionObserver-equivalent
- *    triggers for rows with many mockups.
- * 4. useMemo on mockup list prevents array re-allocation on re-render.
- */
 const PosterRow = memo(({ item }) => {
-  const containerRef = useRef(null);
-  const leftColRef = useRef(null);
+  /**
+   * PIN FIX — three refs instead of two:
+   *
+   * outerRef   → the full-width row wrapper. Used as ScrollTrigger `trigger`
+   *              AND as the `pin` target's end-boundary. Must be a plain div
+   *              with no fixed height so ScrollTrigger can measure it freely.
+   *
+   * leftColRef → the element we actually want to pin. Must NOT have a fixed
+   *              height class (removed `lg:h-[80vh]`) — GSAP injects its own
+   *              inline height/transform during pinning and a competing CSS
+   *              height breaks the calculation.
+   *
+   * rightColRef → the scrollable mockup column. Its natural scrolled height
+   *              determines how long the pin lasts. ScrollTrigger uses
+   *              `end: "bottom bottom"` on `outerRef` which equals the bottom
+   *              of the taller column — so the pin releases exactly when the
+   *              right column finishes scrolling into view.
+   *
+   * WHY pinSpacing: true (default):
+   *   With `pinSpacing: false` inside a CSS Grid, the grid collapses the
+   *   pinned column's space the moment GSAP lifts it out of flow, causing the
+   *   right column to shift left and overlap. Keeping pinSpacing: true lets
+   *   GSAP insert a spacer that holds the grid cell open.
+   *
+   * WHY trigger === outerRef (not leftColRef):
+   *   The trigger controls WHEN the pin starts/ends. If trigger === leftColRef,
+   *   ScrollTrigger measures only the left column's height, so `end: "bottom
+   *   bottom"` resolves too early and the pin releases before the right column
+   *   finishes. Using outerRef (which wraps both columns) gives the correct
+   *   full-row height for the end calculation.
+   */
+  const outerRef    = useRef(null);
+  const leftColRef  = useRef(null);
+  const rightColRef = useRef(null);
 
-  // Memoize the mockup JSX list — avoids rebuilding on any parent re-render
   const mockupElements = useMemo(
     () =>
       item.mockups.map((imgSrc, index) => (
@@ -98,70 +100,60 @@ const PosterRow = memo(({ item }) => {
 
   useGSAP(
     () => {
-      // --- Entry animation: text + poster together ---
+      // Entry animations — scoped to outerRef so selectors are isolated per row
       gsap.timeline({
         scrollTrigger: {
-          trigger: containerRef.current,
+          trigger: outerRef.current,
           start: "top 80%",
           toggleActions: "play none none reverse",
         },
       })
         .from(".anim-text", {
-          x: -100,
-          opacity: 0,
-          duration: 1,
-          stagger: 0.15,
-          ease: "power3.out",
+          x: -100, opacity: 0, duration: 1, stagger: 0.15, ease: "power3.out",
         })
-        .from(
-          ".anim-poster",
-          { x: -100, opacity: 0, duration: 1.2, ease: "power3.out" },
-          "<+=0.2"
-        )
-        // Mockups animate from right, staggered — single trigger instead of N triggers
-        .from(
-          ".anim-mockup",
-          {
-            x: 100,
-            opacity: 0,
-            duration: 0.8,
-            stagger: 0.15,
-            ease: "power3.out",
-          },
-          "<+=0.3"
-        );
+        .from(".anim-poster", {
+          x: -100, opacity: 0, duration: 1.2, ease: "power3.out",
+        }, "<+=0.2")
+        .from(".anim-mockup", {
+          x: 100, opacity: 0, duration: 0.8, stagger: 0.15, ease: "power3.out",
+        }, "<+=0.3");
 
-      // --- Pin: desktop only — matchMedia instance returned for proper cleanup ---
+      // Pin — desktop only
       const mm = gsap.matchMedia();
       mm.add("(min-width: 1024px)", () => {
         ScrollTrigger.create({
-          trigger: containerRef.current,
-          pin: leftColRef.current,
-          start: "top 50px",
-          end: "bottom bottom",
-          pinSpacing: false,
+          // trigger = the whole row so end-boundary uses full row height
+          trigger:    outerRef.current,
+          // pin = only the left column
+          pin:        leftColRef.current,
+          start:      "top 50px",
+          // end when the BOTTOM of the outer row hits the BOTTOM of the viewport
+          end:        "bottom bottom",
+          // pinSpacing: true (default) — keeps the grid cell open while pinned
+          pinSpacing: true,
         });
-        // Return a cleanup function for matchMedia context
         return () => {};
       });
 
-      // Returning mm makes useGSAP call mm.revert() on unmount — fixes original leak
       return () => mm.revert();
     },
-    { scope: containerRef }
+    { scope: outerRef }
   );
 
   return (
+    /**
+     * outerRef on the row — no fixed height, let content define it.
+     * `items-start` keeps both columns top-aligned before the pin kicks in.
+     */
     <div
-      ref={containerRef}
+      ref={outerRef}
       className="relative grid items-start grid-cols-1 gap-8 lg:grid-cols-3 lg:gap-12"
     >
-      {/* Pinned left column */}
+      {/* LEFT — pinned column. NO fixed height (removed lg:h-[80vh]). */}
       <div
         ref={leftColRef}
-        className="w-full lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center lg:h-[80vh] p-4 lg:p-8"
+        className="w-full lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center p-4 lg:p-8"
       >
-        {/* Text */}
         <div className="flex flex-col items-start justify-center w-full">
           <h3 className="text-3xl font-medium text-left text-white anim-text md:text-5xl lg:text-6xl font-bebas">
             {item.title}
@@ -171,7 +163,6 @@ const PosterRow = memo(({ item }) => {
           </p>
         </div>
 
-        {/* Main poster */}
         <div className="flex items-center justify-center w-full anim-poster">
           <LazyImage
             src={item.mainPoster}
@@ -181,8 +172,11 @@ const PosterRow = memo(({ item }) => {
         </div>
       </div>
 
-      {/* Scrollable mockups */}
-      <div className="flex flex-col items-center w-full gap-8 pt-4 pb-12 lg:col-span-1 lg:gap-12 lg:pt-24">
+      {/* RIGHT — scrollable mockups column. ref used only for height measurement. */}
+      <div
+        ref={rightColRef}
+        className="flex flex-col items-center w-full gap-8 pt-4 pb-12 lg:col-span-1 lg:gap-12 lg:pt-24"
+      >
         {mockupElements}
       </div>
     </div>
