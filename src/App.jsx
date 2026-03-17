@@ -10,6 +10,7 @@ import Navbar from "./components/navbar/Navbar";
 import GoToTop from "./components/GoToTop";
 import InvertedCursor from "./components/invertedCursor/InvertedCursor";
 import ErrorPage from "./pages/error/ErrorPage";
+import MusicToggle from "./components/MusicToggle";
 
 const AppContent = () => {
   const lenis = useLenis();
@@ -76,6 +77,7 @@ const AppContent = () => {
     <>
       <InvertedCursor />
       {/* <ScrollToTop lenis={lenis} /> */}
+      <MusicToggle />
       <ScrollBar />
       <Navbar lenis={lenis} />
       <GoToTop lenis={lenis} />

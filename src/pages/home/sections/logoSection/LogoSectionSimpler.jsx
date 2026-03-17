@@ -55,10 +55,10 @@ const LogoSectionSimpler = () => {
   const logos = [
     { Component: SynchronicityLogo, ...getSize(500, 300) },
     { Component: CodeClubLogo, ...getSize(500, 200) },
+    { Component: JugsLogo, ...getSize(500, 150) },
+    { Component: DipramLogo, ...getSize(500, 300) },
     { Component: FrostbyteLogo, ...getSize(500, 300) },
     { Component: CodeverseLogo, ...getSize(500, 300) },
-    { Component: DipramLogo, ...getSize(500, 300) },
-    { Component: JugsLogo, ...getSize(500, 150) },
   ];
 
   useGSAP(
@@ -115,10 +115,10 @@ const LogoSectionSimpler = () => {
       className="relative bg-[#131313] text-white w-full min-h-screen flex flex-col items-center justify-center py-20 px-6 gap-10 lg:gap-20"
     >
       {/* --- HEADER --- */}
-      <div className="flex flex-col items-center text-center gap-4 z-10">
+      <div className="z-10 flex flex-col items-center gap-4 text-center">
         <p
           ref={textRef}
-          className="font-euclid text-lg md:text-lg lg:text-xl text-white max-w-2xl leading-relaxed"
+          className="max-w-2xl text-lg leading-relaxed text-white font-euclid md:text-lg lg:text-xl"
         >
           A curated collection of logos crafted with strong concepts, clean
           geometry, and memorable brand identity. Every design begins with
@@ -131,7 +131,7 @@ const LogoSectionSimpler = () => {
       {/* CHANGE: Switched from Grid to Flexbox to center the orphan logos */}
       <div
         ref={gridRef}
-        className="flex flex-wrap justify-center gap-4 md:gap-16 lg:gap-20 w-full max-w-350 z-10"
+        className="z-10 flex flex-wrap justify-center w-full gap-4 md:gap-16 lg:gap-20 max-w-350"
       >
         {logos.map((Item, index) => (
           <div

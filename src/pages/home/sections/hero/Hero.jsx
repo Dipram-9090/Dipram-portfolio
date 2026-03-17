@@ -228,7 +228,7 @@ const Hero = () => {
       {/* --- Socials --- */}
       <div
         ref={socialsRef}
-        className="lg:flex md:hidden hidden absolute z-20 bottom-8 left-0 w-full justify-center lg:justify-start lg:bottom-48 lg:left-0 lg:w-auto lg:px-8 text-white will-change-transform"
+        className="lg:flex md:hidden hidden absolute z-20 bottom-8 left-0 w-full justify-center lg:justify-start lg:bottom-60 lg:left-0 lg:w-auto lg:px-8 text-white will-change-transform"
       >
         <Socials />
       </div>
