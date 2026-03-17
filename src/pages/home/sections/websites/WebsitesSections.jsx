@@ -57,7 +57,7 @@ const LazyVideo = memo(({ src }) => {
           observer.disconnect();
         }
       },
-      { rootMargin: "200px" }
+      { rootMargin: "500px" }
     );
 
     observer.observe(el);

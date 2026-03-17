@@ -47,7 +47,7 @@ const LazyImage = ({ src, alt, className }) => {
           observer.disconnect();
         }
       },
-      { rootMargin: "450px" } // Load the image just before it enters the screen
+      { rootMargin: "450px" } 
     );
 
     if (imgRef.current) {
@@ -58,13 +58,15 @@ const LazyImage = ({ src, alt, className }) => {
   }, []);
 
   return (
-    // We keep the wrapper div rendered so the layout doesn't jump.
-    // The actual <img> tag only mounts when `isVisible` is true.
     <div ref={imgRef} className={`w-full h-full bg-[#1e1e1e] ${className || ''}`}>
       {isVisible && (
         <img
           src={src}
           alt={alt}
+          loading="lazy"
+          decoding="async"
+          // THE FIX: Refresh ScrollTrigger when the image finishes loading
+          onLoad={() => ScrollTrigger.refresh()} 
           className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
         />
       )}
