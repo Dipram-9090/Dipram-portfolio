@@ -9,27 +9,28 @@ gsap.registerPlugin(ScrollTrigger);
 const postersData = [
   {
     id: 1,
-    title: "Cyberpunk Event Poster",
+    title: "DualSense Edge Wireless Controller",
     description:
-      "A neon-drenched exploration of dystopian aesthetics, blending sharp typography with gritty cyberpunk elements for an immersive underground music event.",
-    mainPoster: "/img/posters/poster-1-main.png",
+      "Designed to reflect the evolving aesthetics of gaming hardware, this poster blends technical detailing with a clean, modern layout. The focus was on balancing information with visual appeal while maintaining a strong, premium identity across different mockup environments.",
+    mainPoster: "/img/posters/poster-1-main.webp",
     mockups: [
-      "/img/posters/poster-1-mockup-1.jpg",
-      "/img/posters/poster-1-mockup-2.png",
-      "/img/posters/poster-1-mockup-3.png",
+      "/img/posters/poster-1-mockup-1.webp",
+      "/img/posters/poster-1-mockup-2.webp",
+      "/img/posters/poster-1-mockup-3.webp",
       // You can add as many as you want here!
     ],
   },
   {
     id: 2,
-    title: "Minimalist Event Poster",
+    title: "911 GT3 RS",
     description:
-      "Stripping away the noise to focus on core typography and negative space. Designed for a modern art exhibition that values breathing room over clutter.",
-    mainPoster: "/img/posters/poster-1-main.png",
+      "Inspired by the raw performance and racing heritage of Porsche, this poster focuses on translating speed into a visual form. The use of dynamic shapes, strong color hierarchy, and multiple perspectives of the vehicle creates a sense of motion and intensity within a static frame.",
+    mainPoster: "/img/posters/poster-2-main.webp",
     mockups: [
-      "/img/posters/poster-1-mockup-1.jpg",
-      "/img/posters/poster-1-mockup-2.png",
-      "/img/posters/poster-1-mockup-3.png",
+      "/img/posters/poster-2-mockup-1.webp",
+      "/img/posters/poster-2-mockup-2.webp",
+      "/img/posters/poster-2-mockup-3.webp",
+      "/img/posters/poster-2-mockup-4.webp",
     ],
   },
 ];
@@ -45,7 +46,7 @@ const PosterRow = ({ item }) => {
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
-          start: "top 60%",
+          start: "top 80%",
           toggleActions: "play none none reverse",
         },
       });
@@ -79,7 +80,7 @@ const PosterRow = ({ item }) => {
         gsap.from(mockup, {
           scrollTrigger: {
             trigger: mockup, // The trigger is the image itself, not the parent container
-            start: "top 60%", // Animates when the top of THIS specific image hits 80% of viewport
+            start: "top 80%", // Animates when the top of THIS specific image hits 80% of viewport
             toggleActions: "play none none reverse",
           },
           x: 100,
@@ -96,7 +97,7 @@ const PosterRow = ({ item }) => {
         ScrollTrigger.create({
           trigger: containerRef.current,
           pin: leftColRef.current,
-          start: "top 100px",
+          start: "top 50px",
           end: "bottom bottom",
           pinSpacing: false,
         });
@@ -113,7 +114,7 @@ const PosterRow = ({ item }) => {
       {/* PINNED WRAPPER */}
       <div
         ref={leftColRef}
-        className="w-full lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center lg:h-[85vh] p-4 lg:p-8"
+        className="w-full lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center lg:h-[80vh] p-4 lg:p-8"
       >
         {/* COLUMN 1: Title & Description */}
         <div className="flex flex-col items-start justify-center w-full">
@@ -130,7 +131,7 @@ const PosterRow = ({ item }) => {
           <img
             src={item.mainPoster}
             alt={item.title}
-            className="anim-poster max-h-[70vh] max-w-full object-contain shadow-2xl shadow-black/50"
+            className="anim-poster max-h-[85vh] max-w-full object-contain shadow-2xl shadow-black/50"
           />
         </div>
       </div>

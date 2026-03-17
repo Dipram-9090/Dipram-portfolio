@@ -135,20 +135,16 @@ const AboutPreview = () => {
       className="bg-[#131313] relative z-0 flex flex-col justify-center gap-15 w-full lg:mt-30 mt-20 md:px-16 lg:px-40 px-6 lg:pb-50 md:py-40 py-40"
     >
       {/* Content */}
-      <div className="flex flex-col gap-6 items-start lg:items-end justify-center">
-        <h1 className="scrollAnimate text-white font-euclid font-medium text-4xl leading-tight md:text-5xl lg:text-6xl lg:leading-18 text-left lg:text-right will-change-transform">
+      <div className="flex flex-col items-start justify-center gap-6  lg:items-end">
+        <h1 className="text-4xl font-medium leading-tight text-left text-white max-w-300 scrollAnimate font-euclid md:text-5xl lg:text-6xl lg:leading-18 lg:text-right will-change-transform">
           Hi, I'm <span>Dipram</span>, <br />
           I’m a{" "}
           <span className="text-[#19E6B6]">
             {" "}
-            multidisciplinary designer{" "}
-          </span>{" "}
-          and
-          <span className="text-[#19E6B6]">
-            {" "}
             creative front-end developer{" "}
           </span>{" "}
-          focused on building{" "}
+          and
+          <span className="text-[#19E6B6]"> designer </span> focused on building{" "}
           <span className="text-[#19E6B6]">
             {" "}
             visually strong, interactive digital experiences.
@@ -164,14 +160,17 @@ const AboutPreview = () => {
       </div>
 
       {/* Tools */}
-      <div className="flex flex-col gap-5 justify-center items-start lg:items-end">
+      <div className="flex flex-col items-start justify-center gap-5 lg:items-end">
         <h1
           ref={toolRef}
-          className="font-bebas text-white text-4xl text-left lg:text-6xl lg:text-right"
+          className="text-4xl text-left text-white font-bebas lg:text-6xl lg:text-right"
         >
           DESIGN TOOLS
         </h1>
-        <div ref={iconRef} className="icons flex items-center gap-4 flex-wrap lg:gap-6">
+        <div
+          ref={iconRef}
+          className="flex flex-wrap items-center gap-4 icons lg:gap-6"
+        >
           <Figma size={50} />
           <AdobeIllustratorIcon size={50} />
           <CanvaIcon size={50} />
@@ -180,43 +179,43 @@ const AboutPreview = () => {
           <FramerIcon color="white" size={50} />
         </div>
       </div>
-      <div className="flex flex-col gap-5 justify-center items-start lg:items-end">
+      <div className="flex flex-col items-start justify-center gap-5 lg:items-end">
         <h1
           ref={techStackRef}
-          className="font-bebas text-white text-4xl text-left lg:text-6xl lg:text-right"
+          className="text-4xl text-left text-white font-bebas lg:text-6xl lg:text-right"
         >
           Frontend Tech Stack
         </h1>
         <div
           ref={techIconRef}
-          className="icons  flex lg:justify-end flex-wrap gap-y-5 gap-x-10 lg:gap-y-4 lg:gap-x-15"
+          className="flex flex-wrap icons lg:justify-end gap-y-5 gap-x-10 lg:gap-y-4 lg:gap-x-15"
         >
           <div className="flex items-center gap-4 lg:gap-6">
             <HTML5icon color="white" size={50} />
             <CSS3icon color="white" size={50} />
             <JSIcon color="white" size={50} />
           </div>
-          <div className="flex gap-4 lg:gap-6 items-center">
+          <div className="flex items-center gap-4 lg:gap-6">
             <TailwindIcon color="white" size={40} />
             <SCSSicon color="white" size={50} />
           </div>
-          <div className="flex gap-4 lg:gap-6 items-center">
+          <div className="flex items-center gap-4 lg:gap-6">
             <GSAPicon color="white" size={25} />
             <MotionIcon color="white" size={25} />
           </div>
-          <div className="flex gap-4 lg:gap-6 items-center">
+          <div className="flex items-center gap-4 lg:gap-6">
             <ReactIcon color="white" size={50} />
             <NextjsIcon color="white" size={50} />
           </div>
-          <div className="flex gap-4 lg:gap-6 items-center">
+          <div className="flex items-center gap-4 lg:gap-6">
             <GitIcon color="white" size={50} />
             <GitHubIcon color="white" size={50} />
           </div>
-          <div className="flex gap-4 lg:gap-6 items-center">
+          <div className="flex items-center gap-4 lg:gap-6">
             <VSicon color="white" size={50} />
             <AntiGravityIcon color="white" size={50} />
           </div>
-          <div className="flex gap-4 lg:gap-6 items-center">
+          <div className="flex items-center gap-4 lg:gap-6">
             <VercelIcon size={50} />
           </div>
         </div>
@@ -225,7 +224,7 @@ const AboutPreview = () => {
       {/* CTA */}
       <div
         ref={buttonRef}
-        className="flex flex-col sm:flex-row gap-6 items-start sm:items-center justify-start lg:justify-end"
+        className="flex flex-col items-start justify-start gap-6 sm:flex-row sm:items-center lg:justify-end"
       >
         <LearnMore
           to={"/about"}
@@ -243,7 +242,7 @@ const AboutPreview = () => {
 
       {/* ABOUT svg */}
       {/* Ensure ABOUTsvg is lightweight or use an IMG tag if it's static */}
-      <div className="absolute -z-10 top-1/2 -translate-y-1/2 pointer-events-none">
+      <div className="absolute -translate-y-1/2 pointer-events-none -z-10 top-1/2">
         <ABOUTsvg />
       </div>
     </div>
