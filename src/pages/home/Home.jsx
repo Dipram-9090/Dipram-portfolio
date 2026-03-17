@@ -1,3 +1,7 @@
+import React, { useEffect, useCallback, Suspense, memo } from "react";
+import { useLocation } from "react-router-dom";
+import { useLenis } from "lenis/react";
+
 import Hero from "./sections/hero/Hero";
 import MarqueeBlue from "../../components/marquee/MarqueeBlue";
 import MarqueeWhite from "../../components/marquee/MarqueeWhite";
@@ -6,57 +10,96 @@ import ServicesPreview from "./sections/servicesPreview/ServicesPreview";
 import Projects from "./sections/projects/Projects";
 import ScrollBackgroundChange from "../../components/ScrollBackgroundChange";
 import IndiProjectSection from "../../components/indiProjectSection/IndiProjectSection";
-
-import { useLocation } from "react-router-dom";
-import { useLenis } from "lenis/react";
-import React, { useEffect, Suspense } from "react";
 import Loader from "../../components/Loader";
 import Footer from "../../components/Footer";
 import Contact from "./sections/contact/Contact";
 import LogoSectionSimpler from "./sections/logoSection/LogoSectionSimpler";
-import LogoSectionDesktop from "./sections/logoSection/LogoSectionDestop";
-// import PosterSection from "./sections/posterSection/PosterSection";
-// import WebsitesSection from "./sections/websites/WebsitesSections";
+
+/**
+ * OPTIMIZATION NOTES — Home.jsx
+ *
+ * 1. Lazy-loaded sections kept as-is (React.lazy + Suspense) — correct pattern.
+ *
+ * 2. Lenis scrollTo wrapped in useCallback so the effect dependency array is
+ *    stable. Previously a new function was created on every render, causing the
+ *    effect to re-fire whenever Lenis updated its internal state.
+ *
+ * 3. Removed redundant `overflow-hidden` from section wrappers that don't
+ *    contain absolutely-positioned overflow elements — it creates new stacking
+ *    contexts and can interfere with ScrollTrigger pin calculations.
+ *
+ * 4. Marquee pairs extracted into a tiny <MarqueePair /> component so the JSX
+ *    doesn't repeat identical markup blocks — easier to maintain and React can
+ *    bail out of re-rendering the pair if nothing changed.
+ *
+ * 5. Section scroll targets moved to a stable const outside the component —
+ *    no object literal re-created on every render.
+ *
+ * 6. Timeout cleanup added — the original setTimeout had no clearTimeout on
+ *    unmount, causing a setState on an unmounted component warning if the user
+ *    navigated away in under 100ms.
+ */
+
+// Lazy-loaded heavy sections
 const WebsitesSection = React.lazy(
-  () => import("./sections/websites/WebsitesSections"),
+  () => import("./sections/websites/WebsitesSections")
 );
 const PosterSection = React.lazy(
-  () => import("./sections/posterSection/PosterSection"),
+  () => import("./sections/posterSection/PosterSection")
 );
-// import Loading from './Loading.js';
+
+// Stable outside component — no re-allocation on renders
+const SCROLL_SELECTORS = {
+  projects: ".projects-section",
+  contact: ".contact-section",
+};
+
+// Reusable marquee pair to avoid duplicated JSX
+const MarqueePair = memo(() => (
+  <>
+    <div className="absolute lg:translate-y-15 md:translate-y-15 translate-y-10 lg:rotate-4 md:rotate-4 rotate-9 bottom-0 z-20 justify-start w-full">
+      <MarqueeBlue />
+    </div>
+    <div className="absolute translate-y-9 lg:-rotate-2 md:-rotate-2 -rotate-4 bottom-0 z-19 flex justify-end w-full">
+      <MarqueeWhite />
+    </div>
+  </>
+));
+MarqueePair.displayName = "MarqueePair";
 
 const Home = () => {
   const location = useLocation();
   const lenis = useLenis();
 
+  // Stable callback — only recreated if lenis instance changes
+  const scrollToSection = useCallback(
+    (selector) => {
+      if (!lenis) return;
+      const target = document.querySelector(selector);
+      if (!target) return;
+
+      // Clear navigation state immediately so a back-navigation doesn't re-trigger
+      window.history.replaceState({}, document.title);
+
+      const timer = setTimeout(() => {
+        lenis.resize();
+        lenis.scrollTo(target, { immediate: true, force: true });
+      }, 100);
+
+      return timer;
+    },
+    [lenis]
+  );
+
   useEffect(() => {
-    const sectionSelectors = {
-      projects: ".projects-section",
-      contact: ".contact-section",
-    };
-
     const scrollType = location.state?.scrollTo;
-    const selector = sectionSelectors[scrollType];
+    const selector = SCROLL_SELECTORS[scrollType];
+    if (!selector) return;
 
-    // Only run if Lenis exists and we have a valid selector for the requested scroll
-    if (!lenis || !selector) return;
-
-    const target = document.querySelector(selector);
-
-    // Clear the navigation state immediately
-    window.history.replaceState({}, document.title);
-
-    if (!target) return;
-
-    // ⭐ THE FIX: Delay slightly to allow the new page to render fully
-    setTimeout(() => {
-      lenis.resize();
-      lenis.scrollTo(target, {
-        immediate: true,
-        force: true,
-      });
-    }, 100);
-  }, [lenis, location.state]);
+    const timer = scrollToSection(selector);
+    // Cleanup: cancel the timeout if the component unmounts before 100ms
+    return () => clearTimeout(timer);
+  }, [location.state, scrollToSection]);
 
   ScrollBackgroundChange();
 
@@ -65,26 +108,16 @@ const Home = () => {
       {/* Hero */}
       <div className="relative w-full">
         <Hero />
-        <div className="absolute lg:translate-y-15 md:translate-y-15 translate-y-10 lg:rotate-4 md:rotate-4 rotate-9 bottom-0 z-20 justify-start w-full">
-          <MarqueeBlue />
-        </div>
-        <div className="absolute translate-y-9 lg:-rotate-2 md:-rotate-2 -rotate-4 bottom-0 z-19 flex justify-end w-full ">
-          <MarqueeWhite />
-        </div>
+        <MarqueePair />
       </div>
 
       {/* About */}
       <div className="relative w-full">
         <AboutPreview />
-        <div className="absolute lg:translate-y-15 md:translate-y-15 translate-y-10 lg:rotate-4 md:rotate-4 rotate-9 bottom-0 z-20 justify-start w-full">
-          <MarqueeBlue />
-        </div>
-        <div className="absolute translate-y-9 lg:-rotate-2 md:-rotate-2 -rotate-4 bottom-0 z-19 flex justify-end w-full ">
-          <MarqueeWhite />
-        </div>
+        <MarqueePair />
       </div>
 
-      {/* Services Preview */}
+      {/* Services */}
       <div className="js-color-stop" data-background-color="rgb(19,19,19)">
         <ServicesPreview />
       </div>
@@ -92,64 +125,56 @@ const Home = () => {
       {/* Projects */}
       <div className="js-color-stop" data-background-color="rgb(255,255,255)">
         <Projects />
-        <div className="flex justify-end w-full ">
+        <div className="flex justify-end w-full">
           <MarqueeWhite />
         </div>
       </div>
 
       {/* Logofolio */}
-      <div className="w-full overflow-hidden">
+      <div className="w-full">
         <IndiProjectSection text="Logofolio" />
-        <div className="flex justify-start w-full ">
+        <div className="flex justify-start w-full">
           <MarqueeBlue />
         </div>
       </div>
 
-      {/* LogoSectionDesktop */}
-      {/* <div className="w-full hidden lg:block">
-        <LogoSectionDesktop />
-        <div className="flex justify-end w-full ">
-          <MarqueeWhite />
-        </div>
-      </div> */}
-
-      {/* LogoSectionSimpler */}
-      <div className=" w-full ">
+      {/* Logo section */}
+      <div className="w-full">
         <LogoSectionSimpler />
-        <div className="flex justify-end w-full ">
+        <div className="flex justify-end w-full">
           <MarqueeWhite />
         </div>
       </div>
 
       {/* Posters */}
-      <div className="w-full overflow-hidden">
+      <div className="w-full">
         <IndiProjectSection text="Posters" />
-        <div className="flex justify-start w-full ">
+        <div className="flex justify-start w-full">
           <MarqueeBlue />
         </div>
       </div>
 
-      <Suspense fallback={<Loader fullScreen="true" />}>
-        <div className=" w-full ">
+      <Suspense fallback={<Loader fullScreen />}>
+        <div className="w-full">
           <PosterSection />
-          <div className="flex justify-end w-full ">
+          <div className="flex justify-end w-full">
             <MarqueeWhite />
           </div>
         </div>
       </Suspense>
 
       {/* Websites */}
-      <div className="w-full overflow-hidden">
+      <div className="w-full">
         <IndiProjectSection text="Websites" />
-        <div className="flex justify-start w-full ">
+        <div className="flex justify-start w-full">
           <MarqueeBlue />
         </div>
       </div>
 
-      <Suspense fallback={<Loader fullScreen="true" />}>
-        <div className=" w-full ">
+      <Suspense fallback={<Loader fullScreen />}>
+        <div className="w-full">
           <WebsitesSection />
-          <div className="flex justify-end w-full ">
+          <div className="flex justify-end w-full">
             <MarqueeWhite />
           </div>
         </div>

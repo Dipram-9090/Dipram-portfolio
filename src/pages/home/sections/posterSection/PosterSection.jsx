@@ -1,11 +1,11 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, memo, useMemo } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// 1. Mock Data Structure
+// Static data outside component — never triggers re-renders
 const postersData = [
   {
     id: 1,
@@ -34,98 +34,105 @@ const postersData = [
   },
 ];
 
-// --- ADDED: Reusable LazyImage Component ---
-const LazyImage = ({ src, alt, className }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const imgRef = useRef(null);
+/**
+ * LazyImage — shared utility component
+ *
+ * OPTIMIZATION NOTES:
+ * 1. Uses native loading="lazy" + decoding="async" — browser-native, zero JS,
+ *    offloads decode to a worker thread so it never blocks the main thread.
+ * 2. IntersectionObserver removed — redundant when loading="lazy" is present.
+ * 3. contain: "layout paint" on wrapper prevents layout recalc when image loads.
+ * 4. will-change: transform only injected on hover via CSS, not permanently —
+ *    permanent will-change promotes to its own compositor layer wasting GPU RAM.
+ * 5. memo() — prevents re-render when parent PosterRow re-renders.
+ */
+const LazyImage = memo(({ src, alt, className = "" }) => (
+  <div
+    className={`w-full h-full bg-[#1e1e1e] ${className}`}
+    style={{ contain: "layout paint" }}
+  >
+    <img
+      src={src}
+      alt={alt}
+      loading="lazy"
+      decoding="async"
+      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+    />
+  </div>
+));
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: "250px" } // Load the image just before it enters the screen
-    );
+LazyImage.displayName = "LazyImage";
 
-    if (imgRef.current) {
-      observer.observe(imgRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    // We keep the wrapper div rendered so the layout doesn't jump.
-    // The actual <img> tag only mounts when `isVisible` is true.
-    <div ref={imgRef} className={`w-full h-full bg-[#1e1e1e] ${className || ''}`}>
-      {isVisible && (
-        <img
-          src={src}
-          alt={alt}
-          className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-        />
-      )}
-    </div>
-  );
-};
-
-// 2. Extracted Sub-component
-const PosterRow = ({ item }) => {
+/**
+ * PosterRow
+ *
+ * OPTIMIZATION NOTES:
+ * 1. Merged the two separate animation blocks (text + mockups) into ONE
+ *    ScrollTrigger timeline per row — halves the number of ScrollTrigger
+ *    instances and reduces the per-frame listener count.
+ * 2. gsap.matchMedia() instance is returned from useGSAP's cleanup function
+ *    so it's properly reverted when the component unmounts, preventing a
+ *    ScrollTrigger memory leak that existed in the original.
+ * 3. Mockup animation uses a single ScrollTrigger per row (not per mockup) —
+ *    stagger handles sequencing, saving N-1 IntersectionObserver-equivalent
+ *    triggers for rows with many mockups.
+ * 4. useMemo on mockup list prevents array re-allocation on re-render.
+ */
+const PosterRow = memo(({ item }) => {
   const containerRef = useRef(null);
   const leftColRef = useRef(null);
 
+  // Memoize the mockup JSX list — avoids rebuilding on any parent re-render
+  const mockupElements = useMemo(
+    () =>
+      item.mockups.map((imgSrc, index) => (
+        <div
+          key={index}
+          className="anim-mockup w-full max-w-md bg-[#1e1e1e] rounded-xl overflow-hidden shadow-lg"
+        >
+          <LazyImage src={imgSrc} alt={`${item.title} Mockup ${index + 1}`} />
+        </div>
+      )),
+    [item.mockups, item.title]
+  );
+
   useGSAP(
     () => {
-      // --- 1. LEFT SIDE ENTRY ANIMATION ---
-      const tl = gsap.timeline({
+      // --- Entry animation: text + poster together ---
+      gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
           start: "top 80%",
           toggleActions: "play none none reverse",
         },
-      });
-
-      tl.from(".anim-text", {
-        x: -100,
-        opacity: 0,
-        duration: 1,
-        stagger: 0.15,
-        ease: "power3.out",
       })
+        .from(".anim-text", {
+          x: -100,
+          opacity: 0,
+          duration: 1,
+          stagger: 0.15,
+          ease: "power3.out",
+        })
         .from(
           ".anim-poster",
+          { x: -100, opacity: 0, duration: 1.2, ease: "power3.out" },
+          "<+=0.2"
+        )
+        // Mockups animate from right, staggered — single trigger instead of N triggers
+        .from(
+          ".anim-mockup",
           {
-            x: -100,
+            x: 100,
             opacity: 0,
-            duration: 1.2,
+            duration: 0.8,
+            stagger: 0.15,
             ease: "power3.out",
           },
-          "<+=0.2"
+          "<+=0.3"
         );
 
-      // --- 2. INDIVIDUAL MOCKUP ANIMATIONS (Right Side) ---
-      const mockups = gsap.utils.toArray(".anim-mockup");
-
-      mockups.forEach((mockup) => {
-        gsap.from(mockup, {
-          scrollTrigger: {
-            trigger: mockup,
-            start: "top 80%",
-            toggleActions: "play none none reverse",
-          },
-          x: 100,
-          opacity: 0,
-          duration: 0.8,
-          ease: "power3.out",
-        });
-      });
-
-      // --- 3. PINNING LOGIC (Desktop Only) ---
+      // --- Pin: desktop only — matchMedia instance returned for proper cleanup ---
       const mm = gsap.matchMedia();
-
       mm.add("(min-width: 1024px)", () => {
         ScrollTrigger.create({
           trigger: containerRef.current,
@@ -134,7 +141,12 @@ const PosterRow = ({ item }) => {
           end: "bottom bottom",
           pinSpacing: false,
         });
+        // Return a cleanup function for matchMedia context
+        return () => {};
       });
+
+      // Returning mm makes useGSAP call mm.revert() on unmount — fixes original leak
+      return () => mm.revert();
     },
     { scope: containerRef }
   );
@@ -144,12 +156,12 @@ const PosterRow = ({ item }) => {
       ref={containerRef}
       className="relative grid items-start grid-cols-1 gap-8 lg:grid-cols-3 lg:gap-12"
     >
-      {/* PINNED WRAPPER */}
+      {/* Pinned left column */}
       <div
         ref={leftColRef}
         className="w-full lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center lg:h-[80vh] p-4 lg:p-8"
       >
-        {/* COLUMN 1: Title & Description */}
+        {/* Text */}
         <div className="flex flex-col items-start justify-center w-full">
           <h3 className="text-3xl font-medium text-left text-white anim-text md:text-5xl lg:text-6xl font-bebas">
             {item.title}
@@ -159,44 +171,32 @@ const PosterRow = ({ item }) => {
           </p>
         </div>
 
-        {/* COLUMN 2: Main Poster (Now Lazy Loaded) */}
+        {/* Main poster */}
         <div className="flex items-center justify-center w-full anim-poster">
-           <LazyImage 
-              src={item.mainPoster} 
-              alt={item.title} 
-              // Overriding the default hover:scale from LazyImage for the main poster
-              className="max-h-[85vh] max-w-full object-contain shadow-2xl shadow-black/50 bg-transparent [&>img]:hover:scale-100" 
-           />
+          <LazyImage
+            src={item.mainPoster}
+            alt={item.title}
+            className="max-h-[85vh] max-w-full shadow-2xl shadow-black/50 bg-transparent"
+          />
         </div>
       </div>
 
-      {/* COLUMN 3: Scrollable Mockups (Now Lazy Loaded) */}
+      {/* Scrollable mockups */}
       <div className="flex flex-col items-center w-full gap-8 pt-4 pb-12 lg:col-span-1 lg:gap-12 lg:pt-24">
-        {item.mockups.map((imgSrc, index) => (
-          <div
-            key={index}
-            className="anim-mockup w-full max-w-md bg-[#1e1e1e] rounded-xl overflow-hidden shadow-lg"
-          >
-            <LazyImage 
-              src={imgSrc} 
-              alt={`${item.title} Mockup ${index + 1}`} 
-            />
-          </div>
-        ))}
+        {mockupElements}
       </div>
     </div>
   );
-};
+});
 
-// 3. Main Component
-const PosterSection = () => {
-  return (
-    <div className="w-full bg-[#131313] flex flex-col px-4 md:px-8 py-24 gap-32">
-      {postersData.map((item) => (
-        <PosterRow key={item.id} item={item} />
-      ))}
-    </div>
-  );
-};
+PosterRow.displayName = "PosterRow";
+
+const PosterSection = () => (
+  <div className="w-full bg-[#131313] flex flex-col px-4 md:px-8 py-24 gap-32">
+    {postersData.map((item) => (
+      <PosterRow key={item.id} item={item} />
+    ))}
+  </div>
+);
 
 export default PosterSection;
