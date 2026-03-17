@@ -24,7 +24,12 @@ const ServicesPreview = () => {
     },
     {
       link: "/services",
-      text: "End-to-End Design Support",
+      text: "Portfolio & Personal Website",
+      image: "/img/services/image4.webp",
+    },
+    {
+      link: "/services",
+      text: "Interactive Web Experiences",
       image: "/img/services/image1.webp",
     },
   ];
@@ -33,11 +38,7 @@ const ServicesPreview = () => {
       <div className="mix-blend-difference flex flex-col">
         <h1 className="font-bebas text-white text-center text-8xl">SERVICES</h1>
         <p className="font-euclid text-white text-xl text-center w-[70%] mx-auto mt-5">
-          I provide design services that focus on strengthening brand presence,
-          improving clarity, and creating consistent visual experiences across
-          digital platforms. Every project is approached with strategic
-          intent—ensuring the work adds lasting value rather than short-term
-          impact.
+          I offer a combination of design and creative front-end development services focused on building visually strong and interactive digital experiences. From UI/UX and brand systems to motion-driven front-end development, each project is approached with the goal of improving clarity, engagement, and long-term usability.
         </p>
       </div>
 

@@ -7,7 +7,7 @@ import { useRef } from "react";
 
 const Section2 = () => {
   const scrollRef = useRef(null);
-  useGSAP( 
+  useGSAP(
     () => {
       // ============================
       // TEXT (CHARACTER) ANIMATION
@@ -40,13 +40,18 @@ const Section2 = () => {
       className="w-full flex flex-col items-center gap-20 lg:gap-40 my-10 lg:my-15 py-40 px-5 lg:px-20 font-euclid font-medium text-center text-white text-3xl md:text-5xl lg:text-7xl leading-tight"
     >
       <h1 className="section2Class">
-        I offer <span>structured design support</span> across <span>product, brand</span> and
-        <span>marketing</span> — working with teams that value <span>clarity, consistency and
-        reliability</span> over one-off visuals.
+        I offer <span>structured design and front-end development support</span>{" "}
+        across <span>product, brand</span> and
+        <span>interactive digital experiences</span> — working with teams that
+        value <span>clarity, consistency, and reliability</span> over one-off
+        outputs.
         <br />
         <br />
-        Each service is <span>designed to integrate smoothly into real workflows</span>,
-        adapting as products and businesses evolve.
+        Each service is{" "}
+        <span> built to move seamlessly from design to development </span>,
+        combining <span> UI/UX, visual systems, </span> and{" "}
+        <span> motion-driven front-end </span> execution to create experiences
+        that grow with the product.
       </h1>
     </div>
   );

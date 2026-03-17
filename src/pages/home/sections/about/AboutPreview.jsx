@@ -23,7 +23,6 @@ import MotionIcon from "../../../../components/iconComponents/MotionIcon.jsx";
 import VSicon from "../../../../components/iconComponents/VSicon.jsx";
 import AntiGravityIcon from "../../../../components/iconComponents/AntiGravity.jsx";
 import VercelIcon from "../../../../components/iconComponents/VercelIcon.jsx";
-import NPMicon from "../../../../components/iconComponents/NPMicon.jsx";
 import GitIcon from "../../../../components/iconComponents/GitIcon.jsx";
 import GitHubIcon from "../../../../components/iconComponents/GitHubIcon.jsx";
 import WebflowIcon from "../../../../components/iconComponents/WebflowIcon.jsx";
@@ -216,7 +215,6 @@ const AboutPreview = () => {
           <div className="flex gap-4 lg:gap-6 items-center">
             <VSicon color="white" size={50} />
             <AntiGravityIcon color="white" size={50} />
-            <NPMicon color="white" size={50} />
           </div>
           <div className="flex gap-4 lg:gap-6 items-center">
             <VercelIcon size={50} />

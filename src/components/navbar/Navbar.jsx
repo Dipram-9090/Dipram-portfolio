@@ -18,11 +18,36 @@ const Navbar = () => {
   const navRef = useRef(null);
   const location = useLocation();
 
+  // --- GSAP Animation: Initial Entry & Route Change (DESKTOP ONLY) ---
+  useGSAP(() => {
+    const mm = gsap.matchMedia();
+
+    mm.add("(min-width: 1024px)", () => {
+      // Clear any existing scroll transforms when route changes
+      gsap.set(navRef.current, { clearProps: "yPercent,y,transform" });
+
+      gsap.fromTo(
+        navRef.current,
+        {
+          y: -200, // FIX: Changed from y to yPercent
+          opacity: 0,
+        },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1.5,
+          ease: "expo.out", // Changed back to expo.out for a smoother, less "floaty" feel
+          delay: 2.7,
+          overwrite: "auto", // FIX: Kills any conflicting scroll animations running right now
+        }
+      );
+    });
+  }, { dependencies: [location.pathname], revertOnUpdate: true }); 
+
   // --- GSAP Animation: Hide/Show on Scroll (DESKTOP ONLY) ---
   useGSAP(() => {
     const mm = gsap.matchMedia();
 
-    // Only run this animation on screens >= 1024px (Tailwind 'lg')
     mm.add("(min-width: 1024px)", () => {
       let lastDirection = -1;
       const trigger = ScrollTrigger.create({
@@ -30,20 +55,20 @@ const Navbar = () => {
         start: 0,
         end: "max",
         onUpdate: (self) => {
-          // Only animate if direction changes
-          if (self.direction !== lastDirection) {
+          // Only animate if direction changes AND the initial animation is done
+          if (self.direction !== lastDirection && !gsap.isTweening(navRef.current)) {
             lastDirection = self.direction;
             gsap.to(navRef.current, {
               yPercent: self.direction === 1 ? -100 : 0,
-              duration: 0.3,
+              duration: 0.35, // Slightly longer for smoother scroll reaction
               ease: "power2.out",
+              overwrite: "auto", // FIX: Prevents conflict
             });
           }
         },
         invalidateOnRefresh: true,
       });
 
-      // Cleanup for this specific media query
       return () => trigger.kill();
     });
   }, []);
@@ -59,6 +84,7 @@ const Navbar = () => {
           backgroundColor: "transparent",
           duration: 0.5,
           ease: "power2.inOut",
+          overwrite: "auto",
         });
       },
       onEnter: () => {
@@ -66,6 +92,7 @@ const Navbar = () => {
           backgroundColor: "white",
           duration: 0.5,
           ease: "power2.inOut",
+          overwrite: "auto",
         });
       },
       invalidateOnRefresh: true,
@@ -73,15 +100,14 @@ const Navbar = () => {
     return () => trigger.kill();
   }, []);
 
-
   const navLinkStyles =
     "cursor-pointer w-32 font-euclid text-base py-1 rounded-full text-center uppercase";
 
   return (
     <div
       ref={navRef}
-      // Z-INDEX 2000 PRESERVED
-      className="fixed top-0 left-0 right-0 z-2000 px-8 py-4 flex items-center justify-between"
+      // FIX: Added 'will-change-transform' and 'will-change-auto' to optimize browser painting
+      className="fixed top-0 left-0 right-0 z-2000 px-8 py-4 flex items-center justify-between will-change-transform"
     >
       {/* --- Logo --- */}
       <AnimatedLink

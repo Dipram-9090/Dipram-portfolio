@@ -20,6 +20,6 @@
 /* Desktop (lg equivalent) */
 @media (min-width: 1024px) {
   #flowing-menu {
-    height: 50vh;
+    height: 60vh;
   }
 }

@@ -21,91 +21,104 @@ const Hero = () => {
   const wavyGradientRef = useRef(null);
 
   useGSAP(() => {
-    // Reduced delay to 0.5s (3s is too long unless you have a loading screen)
-    const tl = gsap.timeline({ delay: 2.8 });
+    // Adjusted delay to 0.5s as per your original comment
+    const tl = gsap.timeline({ delay: 3.3 });
 
-    // STEP 1: The Main Text (DIPRAM)
-    // Reveal from bottom-up using clip-path. This creates a "curtain" effect.
+    // STEP 1: The Hero Image (Cinematic entrance)
+    // Adding a slight scale-down + upward movement creates a much more premium 3D feel
+    tl.fromTo(
+      heroImgRef.current,
+      {
+        opacity: 0,
+        scale: 1.05,
+        y: 40,
+      },
+      {
+        opacity: 1,
+        scale: 1,
+        y: 0,
+        duration: 1.6,
+        ease: "power2.out",
+      }
+    );
+
+    // STEP 2: The Main Text (DIPRAM)
+    // Restored your side clipping (left-to-right wipe) and horizontal shift
+    // Kept the expo.out ease for that premium, snappy finish
     tl.fromTo(
       DIPRAMbgRef.current,
       {
-        clipPath: "inset(0 100% 0 0)", // Hidden at right
-        translateX: "50%", // Slight vertical shift
+        clipPath: "inset(0 100% 0 0)", // Clipped from the right (hidden)
+        xPercent: 50, // Slight horizontal shift instead of vertical
         opacity: 0,
       },
       {
         clipPath: "inset(0 0% 0 0)", // Fully revealed
-        translateX: 0,
+        xPercent: 0,
         opacity: 1,
-        duration: 1.2,
-        ease: "power3.out",
+        duration: 1.4,
+        ease: "expo.out",
       },
-      "<",
+      "-=1.2" // Overlaps with the image entrance
     );
 
-    // STEP 2: The Hero Image
-    // Overlaps with text animation (starts 0.8s earlier).
-    // Adds a subtle scale effect (1.1 -> 1) to make it feel 3D.
-    tl.from(heroImgRef.current, {
-      opacity: 0,
-      duration: 1,
-      ease: "power2.inOut",
-    });
-
     // STEP 3: Subtitles (Graphic Designer / UI/UX)
-    // We animate the specific <p> tags inside the ref
+    // Added the side clip here too, keeping the beautiful off-beat stagger
     tl.fromTo(
       titleRef.current.children,
       {
         clipPath: "inset(0 100% 0 0)",
-        // translateX: "50%",
+        x: 20, // Horizontal shift to match the main text's flow
         opacity: 0,
       },
       {
         clipPath: "inset(0 0% 0 0)",
-        // translateX: 0,
+        x: 0,
         opacity: 1,
         duration: 1.2,
-        ease: "power2.out",
+        stagger: 0.15, // Left text reveals slightly before right text
+        ease: "power3.out",
       },
-      "-=1.0",
+      "-=1.0"
     );
 
     // STEP 4: Action Buttons
-    // A slight "pop" effect (back.out) makes them feel clickable/tactile
+    // Added a scale property and a `back.out` ease to create a tactile, snappy "pop"
     tl.fromTo(
       buttonsRef.current.children,
       {
-        // y: 40,
-        opacity: 0, // Force Start,
+        y: 30,
+        opacity: 0,
+        scale: 0.9, // Start slightly smaller
         pointerEvents: "none",
       },
       {
-        // y: 0,
-        opacity: 1, // Force End
+        y: 0,
+        opacity: 1,
+        scale: 1, // Snap to full size
         duration: 0.8,
-        ease: "power2.inOut",
+        ease: "back.out(1.7)", // The tactile "pop" effect
         pointerEvents: "auto",
       },
-      "-=0.5",
+      "-=0.6"
     );
 
-    // FIX: Do the same for socials just in case
+    // STEP 5: Socials
     tl.fromTo(
       socialsRef.current,
       {
-        x: -20,
+        x: -30,
         opacity: 0,
       },
       {
         x: 0,
         opacity: 1,
         duration: 1,
-        ease: "power2.inOut",
+        ease: "power3.out",
       },
-      "-=0.5",
+      "-=0.6"
     );
-  }, []);
+  }, { scope: heroSectionRef });
 
   useGSAP(
     () => {
@@ -119,10 +132,9 @@ const Hero = () => {
         (context) => {
           const { isMobile } = context.conditions;
 
-          // DISABLE ON MOBILE: If we are on mobile, stop here.
           if (isMobile) return;
 
-          // EVERYTHING BELOW ONLY RUNS ON DESKTOP
+          // Parallax Timeline
           const parallax = gsap.timeline({
             scrollTrigger: {
               trigger: heroSectionRef.current,
@@ -130,56 +142,21 @@ const Hero = () => {
               end: "bottom top",
               scrub: 0.5,
             },
+            // Added ease: "none" to defaults so parallax movements track the scroll exactly 1:1
+            defaults: { ease: "none", force3D: true } 
           });
 
-          parallax.to(
-            socialsRef.current,
-            {
-              translateY: -100,
-              force3D: true,
-            },
-            0,
-          );
-
-          parallax.to(
-            buttonsRef.current,
-            {
-              translateY: -100,
-              force3D: true,
-            },
-            0,
-          );
-
-          parallax.to(
-            heroImgRef.current,
-            {
-              translateY: 50,
-              force3D: true,
-            },
-            0,
-          );
-
-          parallax.to(
-            mainTextRef.current,
-            {
-              translateY: 100,
-              force3D: true,
-            },
-            0,
-          );
-
-          parallax.to(
-            ".wavyGradient-class",
-            {
-              translateY: 500,
-              force3D: true,
-            },
-            0,
-          );
-        },
+          // Condensed the parallax calls since defaults handles force3D
+          parallax
+            .to(socialsRef.current, { y: -100 }, 0) // Used 'y' instead of 'translateY' (GSAP best practice)
+            .to(buttonsRef.current, { y: -100 }, 0)
+            .to(heroImgRef.current, { y: 50 }, 0)
+            .to(mainTextRef.current, { y: 100 }, 0)
+            .to(".wavyGradient-class", { y: 500 }, 0); 
+        }
       );
     },
-    { scope: heroSectionRef },
+    { scope: heroSectionRef }
   );
 
   return (
@@ -227,7 +204,6 @@ const Hero = () => {
       </div>
 
       {/* --- Action Buttons --- */}
-      {/* ADDED REF HERE */}
       <div
         ref={buttonsRef}
         className="absolute z-10 left-1/2 -translate-x-1/2 bottom-24 md:bottom-32 lg:bottom-48 flex flex-col md:flex-row justify-center items-center gap-4 w-full px-4 will-change-transform"
@@ -250,7 +226,6 @@ const Hero = () => {
       </div>
 
       {/* --- Socials --- */}
-      {/* ADDED REF HERE */}
       <div
         ref={socialsRef}
         className="lg:flex md:hidden hidden absolute z-20 bottom-8 left-0 w-full justify-center lg:justify-start lg:bottom-48 lg:left-0 lg:w-auto lg:px-8 text-white will-change-transform"
