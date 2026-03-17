@@ -9,13 +9,17 @@ import IndiProjectSection from "../../components/indiProjectSection/IndiProjectS
 
 import { useLocation } from "react-router-dom";
 import { useLenis } from "lenis/react";
-import { useEffect } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import Footer from "../../components/Footer";
 import Contact from "./sections/contact/Contact";
 import LogoSectionSimpler from "./sections/logoSection/LogoSectionSimpler";
 import LogoSectionDesktop from "./sections/logoSection/LogoSectionDestop";
 import PosterSection from "./sections/posterSection/PosterSection";
-import WebsitesSection from "./sections/websites/WebsitesSections";
+// import WebsitesSection from "./sections/websites/WebsitesSections";
+const WebsitesSection = lazy(
+  () => import("./sections/websites/WebsitesSections"),
+);
+import Loading from './Loading.js';
 
 const Home = () => {
   const location = useLocation();
@@ -136,12 +140,14 @@ const Home = () => {
         </div>
       </div>
 
-      <div className=" w-full ">
-        <WebsitesSection />
-        <div className="flex justify-end w-full ">
-          <MarqueeWhite />
+      <Suspense fallback={<Loading />}>
+        <div className=" w-full ">
+          <WebsitesSection />
+          <div className="flex justify-end w-full ">
+            <MarqueeWhite />
+          </div>
         </div>
-      </div>
+      </Suspense>
 
       <Contact />
       <Footer />
