@@ -1,16 +1,35 @@
 import React, { useRef, useState, useEffect } from "react";
 import { motion, useInView } from "motion/react";
 
+// Design Tool Icons
 import Figma from "../../../home/sections/about/components/Figma";
 import AdobeIllustratorIcon from "../../../home/sections/about/components/AdobeIllustratorIcon";
 import CanvaIcon from "../../../home/sections/about/components/CanvaIcon";
 import PhotoshopIcon from "../../../home/sections/about/components/PhotoshopIcon";
 
+// Frontend Tech Stack Icons
+import HTML5icon from "../../../../components/iconComponents/HTML5icon.jsx";
+import CSS3icon from "../../../../components/iconComponents/CSS3icon.jsx";
+import JSIcon from "../../../../components/iconComponents/JSIcon.jsx";
+import TailwindIcon from "../../../../components/iconComponents/TailwindIcon.jsx";
+import ReactIcon from "../../../../components/iconComponents/ReactIcon.jsx";
+import NextjsIcon from "../../../../components/iconComponents/NextjsIcon.jsx";
+import SCSSicon from "../../../../components/iconComponents/SCSSicon.jsx";
+import GSAPicon from "../../../../components/iconComponents/GSAPicon.jsx";
+import MotionIcon from "../../../../components/iconComponents/MotionIcon.jsx";
+import VSicon from "../../../../components/iconComponents/VSicon.jsx";
+import AntiGravityIcon from "../../../../components/iconComponents/AntiGravity.jsx";
+import VercelIcon from "../../../../components/iconComponents/VercelIcon.jsx";
+import GitIcon from "../../../../components/iconComponents/GitIcon.jsx";
+import GitHubIcon from "../../../../components/iconComponents/GitHubIcon.jsx";
+import WebflowIcon from "../../../../components/iconComponents/WebflowIcon.jsx";
+import FramerIcon from "../../../../components/iconComponents/FramerIcon.jsx";
+
 /* ---------------- Reusable Scroll Animation Hook ---------------- */
 
 const useScrollAnimation = () => {
   const ref = useRef(null);
-  const inView = useInView(ref, { amount: 0.3, once: false });
+  const inView = useInView(ref, { amount: 0.1, once: false }); // Slightly reduced amount for smoother trigger on taller sections
 
   const lastScrollY = useRef(0);
   const [direction, setDirection] = useState(1);
@@ -105,7 +124,15 @@ const Para = ({ heading, text }) => {
 const Tools = () => {
   const anim = useScrollAnimation();
 
-  const icons = [Figma, AdobeIllustratorIcon, CanvaIcon, PhotoshopIcon];
+  // Added WebflowIcon and FramerIcon here
+  const designIcons = [Figma, AdobeIllustratorIcon, CanvaIcon, PhotoshopIcon, WebflowIcon, FramerIcon];
+  
+  // Removed them from techIcons to avoid duplication
+  const techIcons = [
+    HTML5icon, CSS3icon, JSIcon, TailwindIcon, ReactIcon, NextjsIcon,
+    SCSSicon, GSAPicon, MotionIcon, VSicon, AntiGravityIcon, VercelIcon,
+    GitIcon, GitHubIcon
+  ];
 
   return (
     <motion.div
@@ -114,34 +141,70 @@ const Tools = () => {
       initial="hidden"
       animate={anim.inView ? "show" : "hidden"}
       // Margin bottom: mb-20 mobile -> mb-60 desktop
-      className="tools flex flex-col items-center mb-40 lg:mb-60 gap-8 lg:gap-15 w-full px-5 lg:px-0"
+      className="tools flex flex-col items-center mb-40 lg:mb-60 gap-20 lg:gap-32 w-full px-5 lg:px-0"
     >
-      <motion.h2
-        variants={anim.item}
-        custom={anim.direction}
-        // Font size: text-5xl mobile -> text-9xl desktop
-        className="font-bebas text-5xl md:text-7xl lg:text-9xl text-white text-center"
-      >
-        Tools That I Use
-      </motion.h2>
+      
+      {/* ---------- Design Tools Section ---------- */}
+      <div className="flex flex-col items-center gap-8 lg:gap-15 w-full">
+        <motion.h2
+          variants={anim.item}
+          custom={anim.direction}
+          // Font size: text-5xl mobile -> text-9xl desktop
+          className="font-bebas text-5xl md:text-7xl lg:text-9xl text-white text-center"
+        >
+          Design Tools
+        </motion.h2>
 
-      {/* Icons Container: flex-wrap added for mobile, gap reduced */}
-      <motion.div 
-        className="flex flex-wrap justify-center gap-5 lg:gap-30" 
-        variants={anim.container}
-      >
-        {icons.map((Icon, i) => (
-          <motion.div 
-            key={i} 
-            variants={anim.item} 
-            custom={anim.direction}
-            // Scale: visually shrink icons on mobile (75%) -> 100% on desktop
-            className="scale-75 md:scale-90 lg:scale-100"
-          >
-            <Icon size={100} />
-          </motion.div>
-        ))}
-      </motion.div>
+        {/* Styled identically to Tech Stack */}
+        <motion.div 
+          className="flex flex-wrap justify-center items-center gap-5 lg:gap-16 max-w-6xl" 
+          variants={anim.container}
+        >
+          {designIcons.map((Icon, i) => (
+            <motion.div 
+              key={`design-${i}`} 
+              variants={anim.item} 
+              custom={anim.direction}
+              className="scale-75 md:scale-90 lg:scale-100"
+            >
+              <Icon size={60} color="white" />
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+
+      {/* ---------- Frontend Tech Stack Section ---------- */}
+      <div className="flex flex-col items-center gap-8 lg:gap-15 w-full">
+        <motion.h2
+          variants={anim.item}
+          custom={anim.direction}
+          className="font-bebas text-5xl md:text-7xl lg:text-9xl text-white text-center"
+        >
+          Frontend Tech Stack
+        </motion.h2>
+
+        <motion.div 
+          className="flex flex-wrap justify-center items-center gap-5 lg:gap-16 max-w-6xl" 
+          variants={anim.container}
+        >
+          {techIcons.map((Icon, i) => {
+            // Check if the current Icon is GSAPicon or MotionIcon
+            const iconSize = (Icon === GSAPicon || Icon === MotionIcon || Icon === TailwindIcon ) ? 35 : 60;
+
+            return (
+              <motion.div 
+                key={`tech-${i}`} 
+                variants={anim.item} 
+                custom={anim.direction}
+                className="scale-75 md:scale-90 lg:scale-100"
+              >
+                <Icon size={iconSize} color="white" />
+              </motion.div>
+            );
+          })}
+        </motion.div>
+      </div>
+
     </motion.div>
   );
 };

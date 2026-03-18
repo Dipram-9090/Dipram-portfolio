@@ -176,7 +176,7 @@ const WebsiteRow = memo(({ item }) => {
             rel="noreferrer"
             className="flex items-center justify-center cursor-pointer duration-200 hover:bg-[#19E6B6] hover:ring-[#19E6B6] hover:text-black font-euclid font-medium text-white uppercase text-lg md:text-xl ring-3 ring-inset ring-white rounded-full px-8 py-2 lg:px-12 text-center w-full sm:w-auto"
           >
-            GitHub Repo
+            GitHub Contributuon
           </a>
         </div>
       </div>

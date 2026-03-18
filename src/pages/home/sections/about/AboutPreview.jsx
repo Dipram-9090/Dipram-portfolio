@@ -188,7 +188,7 @@ const AboutPreview = () => {
         </h1>
         <div
           ref={techIconRef}
-          className="flex flex-wrap icons lg:justify-end gap-y-5 gap-x-10 lg:gap-y-4 lg:gap-x-15"
+          className="flex flex-wrap icons lg:justify-end gap-y-4 gap-x-4 lg:gap-y-4 lg:gap-x-15"
         >
           <div className="flex items-center gap-4 lg:gap-6">
             <HTML5icon color="white" size={50} />

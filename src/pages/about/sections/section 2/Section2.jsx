@@ -56,7 +56,7 @@ const Section2 = () => {
     { scope: scrollRef },
   );
 
-  return ( 
+  return (
     <div
       ref={scrollRef}
       // Container:
@@ -66,17 +66,24 @@ const Section2 = () => {
       className="w-full flex flex-col items-center gap-20 lg:gap-40 my-10 lg:my-15 py-40 px-5 lg:px-20 font-euclid font-medium text-center text-white text-3xl md:text-5xl lg:text-7xl leading-tight"
     >
       <h1 className="section2Class w-full max-w-[90vw] lg:max-w-none">
-        I’m a <span className="text-teal-400">multidisciplinary designer</span>{" "}
+        I’m a{" "}
+        <span className="text-teal-400">
+          designer and creative front-end developer
+        </span>{" "}
         working remotely, operating within{" "}
         <span className="text-teal-400">
           structured, requirement-driven workflows.
         </span>{" "}
         My work is focused on{" "}
-        <span className="text-teal-400">solving real problems</span> through{" "}
+        <span className="text-teal-400">solving real problems</span> by
+        combining{" "}
         <span className="text-teal-400">
-          clear, consistent, and visually professional design
+          design, interaction, and development
         </span>{" "}
-        solutions.
+        to create{" "}
+        <span className="text-teal-400">
+          clear, consistent, and visually strong digital experiences.
+        </span>
       </h1>
     </div>
   );
