@@ -237,7 +237,7 @@ const WebsitesSection = () => {
       ref={sectionRef}
       // Removed the hardcoded bg-[#131313] Tailwind class so GSAP can control it smoothly.
       // Set an initial inline style instead to prevent a flash of unstyled background.
-      style={{ backgroundColor: "#A0CCD8" }}
+      style={{ backgroundColor: "#0b2b7c" }}
       className="w-full flex flex-col px-4 md:px-8 py-40 gap-60 overflow-hidden"
     >
       {websitesData.map((item) => (
