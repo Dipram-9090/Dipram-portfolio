@@ -18,6 +18,7 @@ const postersData = [
       "/img/posters/poster-1-mockup-2.webp",
       "/img/posters/poster-1-mockup-3.webp",
     ],
+    bgColor: "#000722", // Default dark gray
   },
   {
     id: 2,
@@ -31,6 +32,7 @@ const postersData = [
       "/img/posters/poster-2-mockup-3.webp",
       "/img/posters/poster-2-mockup-4.webp",
     ],
+    bgColor: "#500604", // A subtle dark reddish/burgundy hue for Porsche
   },
 ];
 
@@ -47,7 +49,7 @@ const LazyImage = ({ src, alt, className }) => {
           observer.disconnect();
         }
       },
-      { rootMargin: "450px" } 
+      { rootMargin: "450px" },
     );
 
     if (imgRef.current) {
@@ -58,7 +60,10 @@ const LazyImage = ({ src, alt, className }) => {
   }, []);
 
   return (
-    <div ref={imgRef} className={`w-full h-full bg-[#1e1e1e] ${className || ''}`}>
+    <div
+      ref={imgRef}
+      className={`w-full h-full bg-[#1e1e1e] ${className || ""}`}
+    >
       {isVisible && (
         <img
           src={src}
@@ -66,7 +71,7 @@ const LazyImage = ({ src, alt, className }) => {
           loading="lazy"
           decoding="async"
           // THE FIX: Refresh ScrollTrigger when the image finishes loading
-          onLoad={() => ScrollTrigger.refresh()} 
+          onLoad={() => ScrollTrigger.refresh()}
           className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
         />
       )}
@@ -96,17 +101,16 @@ const PosterRow = ({ item }) => {
         duration: 1,
         stagger: 0.15,
         ease: "power3.out",
-      })
-        .from(
-          ".anim-poster",
-          {
-            x: -100,
-            opacity: 0,
-            duration: 1.2,
-            ease: "power3.out",
-          },
-          "<+=0.2"
-        );
+      }).from(
+        ".anim-poster",
+        {
+          x: -100,
+          opacity: 0,
+          duration: 1.2,
+          ease: "power3.out",
+        },
+        "<+=0.2",
+      );
 
       // --- 2. INDIVIDUAL MOCKUP ANIMATIONS (Right Side) ---
       const mockups = gsap.utils.toArray(".anim-mockup");
@@ -138,13 +142,14 @@ const PosterRow = ({ item }) => {
         });
       });
     },
-    { scope: containerRef }
+    { scope: containerRef },
   );
 
   return (
     <div
       ref={containerRef}
-      className="relative grid items-start grid-cols-1 gap-8 lg:grid-cols-3 lg:gap-12"
+      className="poster-color-trigger relative grid items-start grid-cols-1 gap-8 lg:grid-cols-3 lg:gap-12"
+      data-bg-color={item.bgColor}
     >
       {/* PINNED WRAPPER */}
       <div
@@ -156,19 +161,19 @@ const PosterRow = ({ item }) => {
           <h3 className="text-3xl font-medium text-left text-white anim-text md:text-5xl lg:text-6xl font-bebas">
             {item.title}
           </h3>
-          <p className="max-w-md mt-6 text-sm text-left text-gray-400 anim-text md:text-base font-euclid">
+          <p className="max-w-md mt-6 text-sm text-left text-white/80 anim-text md:text-base font-euclid">
             {item.description}
           </p>
         </div>
 
         {/* COLUMN 2: Main Poster (Now Lazy Loaded) */}
         <div className="flex items-center justify-center w-full anim-poster">
-           <LazyImage 
-              src={item.mainPoster} 
-              alt={item.title} 
-              // Overriding the default hover:scale from LazyImage for the main poster
-              className="max-h-[85vh] max-w-full object-contain shadow-2xl shadow-black/50 bg-transparent [&>img]:hover:scale-100" 
-           />
+          <LazyImage
+            src={item.mainPoster}
+            alt={item.title}
+            // Overriding the default hover:scale from LazyImage for the main poster
+            className="max-h-[85vh] max-w-full object-contain shadow-2xl shadow-black/50 bg-transparent [&>img]:hover:scale-100"
+          />
         </div>
       </div>
 
@@ -179,10 +184,7 @@ const PosterRow = ({ item }) => {
             key={index}
             className="anim-mockup w-full max-w-md bg-[#1e1e1e] rounded-xl overflow-hidden shadow-lg"
           >
-            <LazyImage 
-              src={imgSrc} 
-              alt={`${item.title} Mockup ${index + 1}`} 
-            />
+            <LazyImage src={imgSrc} alt={`${item.title} Mockup ${index + 1}`} />
           </div>
         ))}
       </div>
@@ -192,8 +194,46 @@ const PosterRow = ({ item }) => {
 
 // 3. Main Component
 const PosterSection = () => {
+  const sectionRef = useRef(null);
+
+  useGSAP(
+    () => {
+      // Grab all the rows that act as color triggers
+      const triggers = gsap.utils.toArray(".poster-color-trigger");
+
+      triggers.forEach((trigger) => {
+        const color = trigger.dataset.bgColor;
+
+        ScrollTrigger.create({
+          trigger: trigger,
+          start: "top 50%", // Triggers when the top of the row hits the middle of the viewport
+          end: "bottom 50%",
+          onEnter: () =>
+            gsap.to(sectionRef.current, {
+              backgroundColor: color,
+              duration: 0.8,
+              ease: "power2.out",
+            }),
+          onEnterBack: () =>
+            gsap.to(sectionRef.current, {
+              backgroundColor: color,
+              duration: 0.8,
+              ease: "power2.out",
+            }),
+        });
+      });
+    },
+    { scope: sectionRef },
+  );
+
   return (
-    <div className="w-full bg-[#131313] flex flex-col px-4 md:px-8 py-24 gap-32">
+    <div
+      ref={sectionRef}
+      // REMOVED: bg-[#131313] class
+      // ADDED: Initial inline style and transition-colors class
+      style={{ backgroundColor: "#131313" }}
+      className="w-full flex flex-col px-4 md:px-8 py-24 gap-32"
+    >
       {postersData.map((item) => (
         <PosterRow key={item.id} item={item} />
       ))}

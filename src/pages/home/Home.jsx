@@ -15,31 +15,6 @@ import Footer from "../../components/Footer";
 import Contact from "./sections/contact/Contact";
 import LogoSectionSimpler from "./sections/logoSection/LogoSectionSimpler";
 
-/**
- * OPTIMIZATION NOTES — Home.jsx
- *
- * 1. Lazy-loaded sections kept as-is (React.lazy + Suspense) — correct pattern.
- *
- * 2. Lenis scrollTo wrapped in useCallback so the effect dependency array is
- *    stable. Previously a new function was created on every render, causing the
- *    effect to re-fire whenever Lenis updated its internal state.
- *
- * 3. Removed redundant `overflow-hidden` from section wrappers that don't
- *    contain absolutely-positioned overflow elements — it creates new stacking
- *    contexts and can interfere with ScrollTrigger pin calculations.
- *
- * 4. Marquee pairs extracted into a tiny <MarqueePair /> component so the JSX
- *    doesn't repeat identical markup blocks — easier to maintain and React can
- *    bail out of re-rendering the pair if nothing changed.
- *
- * 5. Section scroll targets moved to a stable const outside the component —
- *    no object literal re-created on every render.
- *
- * 6. Timeout cleanup added — the original setTimeout had no clearTimeout on
- *    unmount, causing a setState on an unmounted component warning if the user
- *    navigated away in under 100ms.
- */
-
 // Lazy-loaded heavy sections
 const WebsitesSection = React.lazy(
   () => import("./sections/websites/WebsitesSections")
