@@ -90,111 +90,118 @@ const LazyVideo = memo(({ src }) => {
 LazyVideo.displayName = "LazyVideo";
 
 /**
- * WebsiteRow
- *
- * OPTIMIZATION NOTES:
- * 1. Single unified GSAP timeline instead of two separate `.from()` calls —
- *    one ScrollTrigger instance per row, fewer listeners on scroll events.
- * 2. Tech stack pills memoized — array map only re-runs if techStack changes.
- * 3. Action buttons extracted as stable JSX (no inline arrow functions on
- *    hot-path elements — avoids creating new function objects every render).
- * 4. memo() wraps the whole row — rows don't re-render when siblings change.
- */
+ * WebsiteRow
+ *
+ * OPTIMIZATION NOTES:
+ * 1. Single unified GSAP timeline instead of two separate `.from()` calls —
+ * one ScrollTrigger instance per row, fewer listeners on scroll events.
+ * 2. Tech stack pills memoized — array map only re-runs if techStack changes.
+ * 3. Action buttons extracted as stable JSX (no inline arrow functions on
+ * hot-path elements — avoids creating new function objects every render).
+ * 4. memo() wraps the whole row — rows don't re-render when siblings change.
+ */
 const WebsiteRow = memo(({ item }) => {
-  const containerRef = useRef(null);
+  const containerRef = useRef(null);
 
-  const techPills = useMemo(
-    () =>
-      item.techStack.map((tech, index) => (
-        <p
-          key={index}
-          className="px-4 py-1 text-sm font-medium text-white bg-[#5043FA] rounded-full font-euclid"
-        >
-          {tech}
-        </p>
-      )),
-    [item.techStack],
-  );
+  const techPills = useMemo(
+    () =>
+      item.techStack.map((tech, index) => (
+        <p
+          key={index}
+          className="px-4 py-1 text-sm font-medium text-white bg-[#5043FA] rounded-full font-euclid"
+        >
+          {tech}
+        </p>
+      )),
+    [item.techStack],
+  );
 
-  useGSAP(
-    () => {
-      gsap
-        .timeline({
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: "top 75%",
-            toggleActions: "play none none reverse",
-          },
-        })
-        .from(".anim-web-text", {
-          y: 50,
-          opacity: 0,
-          duration: 1,
-          stagger: 0.15,
-          ease: "power3.out",
-        })
-        .from(
-          ".anim-web-video",
-          { y: 60, opacity: 0, scale: 0.95, duration: 1.2, ease: "power3.out" },
-          "-=0.8",
-        );
-    },
-    { scope: containerRef },
-  );
+  useGSAP(
+    () => {
+      gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 75%",
+            toggleActions: "play none none reverse",
+          },
+        })
+        // Changed to animate from the left (x: -100 instead of y: 50)
+        .from(".anim-web-text", {
+          x: -100, 
+          opacity: 0,
+          duration: 1,
+          stagger: 0.15,
+          ease: "power3.out",
+        })
+        // Changed to animate from the right (x: 100 instead of y: 60) and removed scale
+        .from(
+          ".anim-web-video",
+          { 
+            x: 100, 
+            opacity: 0, 
+            duration: 1.2, 
+            ease: "power3.out" 
+          },
+          "-=0.8"
+        );
+    },
+    { scope: containerRef },
+  );
 
-  return (
-    <div
-      ref={containerRef}
-      className="website-color-trigger flex flex-col items-center justify-center w-full gap-10"
-      data-bg-color={item.bgColor}
-    >
-      {/* Details block */}
-      <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto text-center">
-        <h3 className="anim-web-text text-5xl font-medium text-white md:text-6xl lg:text-7xl font-bebas">
-          {item.title}
-        </h3>
-        <p className="anim-web-text max-w-2xl mt-6 text-base text-white/80 lg:text-lg font-euclid">
-          {item.description}
-        </p>
+  return (
+    <div
+      ref={containerRef}
+      className="website-color-trigger flex flex-col items-center justify-center w-full gap-10 overflow-hidden" // Added overflow-hidden to prevent horizontal scrollbars during animation
+      data-bg-color={item.bgColor}
+    >
+      {/* Details block */}
+      <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto text-center">
+        <h3 className="anim-web-text text-5xl font-medium text-white md:text-6xl lg:text-7xl font-bebas">
+          {item.title}
+        </h3>
+        <p className="anim-web-text max-w-2xl mt-6 text-base text-white/80 lg:text-lg font-euclid">
+          {item.description}
+        </p>
 
-        <div className="anim-web-text flex flex-wrap justify-center gap-3 mt-6">
-          {techPills}
-        </div>
+        <div className="anim-web-text flex flex-wrap justify-center gap-3 mt-6">
+          {techPills}
+        </div>
 
-        <div className="anim-web-text flex flex-wrap justify-center gap-4 mt-8 w-full sm:w-auto">
-          <a
-            href={item.liveLink}
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center justify-center cursor-pointer duration-200 hover:bg-[#19E6B6] font-euclid font-medium text-black uppercase text-lg md:text-xl bg-white rounded-full px-8 py-2 lg:px-12 text-center w-full sm:w-auto"
-          >
-            Live Website
-          </a>
-          <a
-            href={item.githubLink}
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center justify-center cursor-pointer duration-200 hover:bg-[#19E6B6] hover:ring-[#19E6B6] hover:text-black font-euclid font-medium text-white uppercase text-lg md:text-xl ring-3 ring-inset ring-white rounded-full px-8 py-2 lg:px-12 text-center w-full sm:w-auto"
-          >
-            GitHub Contribution
-          </a>
-        </div>
-      </div>
+        <div className="anim-web-text flex flex-wrap justify-center gap-4 mt-8 w-full sm:w-auto">
+          <a
+            href={item.liveLink}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center justify-center cursor-pointer duration-200 hover:bg-[#19E6B6] font-euclid font-medium text-black uppercase text-lg md:text-xl bg-white rounded-full px-8 py-2 lg:px-12 text-center w-full sm:w-auto"
+          >
+            Live Website
+          </a>
+          <a
+            href={item.githubLink}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center justify-center cursor-pointer duration-200 hover:bg-[#19E6B6] hover:ring-[#19E6B6] hover:text-black font-euclid font-medium text-white uppercase text-lg md:text-xl ring-3 ring-inset ring-white rounded-full px-8 py-2 lg:px-12 text-center w-full sm:w-auto"
+          >
+            GitHub Contribution
+          </a>
+        </div>
+      </div>
 
-      {/* Browser mockup with lazy video */}
-      <div className="anim-web-video flex items-center justify-center w-full max-w-7xl mx-auto">
-        <div className="w-full overflow-hidden bg-[#1e1e1e] border border-white/10 rounded-xl shadow-2xl shadow-black/60">
-          {/* macOS-style top bar */}
-          <div className="flex items-center w-full h-10 px-4 gap-2 bg-[#2a2a2a] border-b border-white/5">
-            <div className="w-3 h-3 rounded-full bg-[#FF5F56]" />
-            <div className="w-3 h-3 rounded-full bg-[#FFBD2E]" />
-            <div className="w-3 h-3 rounded-full bg-[#27C93F]" />
-          </div>
-          <LazyVideo src={item.videoSrc} />
-        </div>
-      </div>
-    </div>
-  );
+      {/* Browser mockup with lazy video */}
+      <div className="anim-web-video flex items-center justify-center w-full max-w-7xl mx-auto">
+        <div className="w-full overflow-hidden bg-[#1e1e1e] border border-white/10 rounded-xl shadow-2xl shadow-black/60">
+          {/* macOS-style top bar */}
+          <div className="flex items-center w-full h-10 px-4 gap-2 bg-[#2a2a2a] border-b border-white/5">
+            <div className="w-3 h-3 rounded-full bg-[#FF5F56]" />
+            <div className="w-3 h-3 rounded-full bg-[#FFBD2E]" />
+            <div className="w-3 h-3 rounded-full bg-[#27C93F]" />
+          </div>
+          <LazyVideo src={item.videoSrc} />
+        </div>
+      </div>
+    </div>
+  );
 });
 
 WebsiteRow.displayName = "WebsiteRow";
