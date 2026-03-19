@@ -1,9 +1,26 @@
-import BaseIcon from "./BaseIcon";
 
-const LogoIcon = (props) => (
-  <BaseIcon viewBox="0 0 23 23" {...props}>
+const LogoIcon = ({ 
+  color = "currentColor", // Controls the Fill
+  stroke = "none", // Controls the Stroke Color (default none)
+  strokeWidth = 0, // Controls the Stroke Thickness
+  viewBox = "0 0 25 25",
+  className = "",
+  style = {},
+  children,
+  ...props
+}) => (
+  <svg
+    viewBox={viewBox}
+    fill={color} // ✅ Sets Fill
+    stroke={stroke} // ✅ Sets Stroke Color
+    strokeWidth={strokeWidth} // ✅ Sets Stroke Width
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+    style={style}
+    {...props}
+  >
     <path d="M14.0459 4.68457V16.5518L17.7578 14.625L15.0918 10.6855L18.8789 14.043V16.2822L14.0459 20.999H14.0449L10.6494 18.3154V7.51074L4.88086 11.6016L9.78906 17.6387L3.45898 12.6094V9.85156L10.6494 2L14.0459 4.68457Z" />
-  </BaseIcon>
+  </svg>
 );
 
 export default LogoIcon;

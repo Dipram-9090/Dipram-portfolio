@@ -36,10 +36,10 @@ const SCROLL_SELECTORS = {
 // Reusable marquee pair to avoid duplicated JSX
 const MarqueePair = memo(() => (
   <>
-    <div className="absolute -translate-x-2 lg:translate-y-32 md:translate-y-15 translate-y-10 lg:rotate-4 md:rotate-4 rotate-9 bottom-0 z-20 w-max">
+    <div className="absolute -translate-x-8 lg:translate-y-35 md:translate-y-27 translate-y-25 lg:rotate-4 md:rotate-4 rotate-5 bottom-0 z-20 w-max">
       <MarqueeBlue />
     </div>
-    <div className="absolute translate-y-9 -translate-x-2 lg:-rotate-2 md:-rotate-2 -rotate-4 bottom-0 z-19 w-max">
+    <div className="absolute translate-y-7 -translate-x-2 lg:-rotate-2 md:-rotate-2 -rotate-4 bottom-0 z-19 w-max">
       <MarqueeWhite />
     </div>
   </>

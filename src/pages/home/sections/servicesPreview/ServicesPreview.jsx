@@ -37,7 +37,7 @@ const ServicesPreview = () => {
     <div className="lg:h-[120vh] md:[120vh] h-screen w-full mt-50 flex flex-col gap-12">
       <div className="mix-blend-difference flex flex-col">
         <h1 className="font-bebas text-white text-center text-8xl">SERVICES</h1>
-        <p className="font-euclid text-white text-xl text-center w-[70%] mx-auto mt-5">
+        <p className="font-euclid text-white text-base text-center w-[70%] mx-auto mt-5">
           I offer a combination of design and creative front-end development services focused on building visually strong and interactive digital experiences. From UI/UX and brand systems to motion-driven front-end development, each project is approached with the goal of improving clarity, engagement, and long-term usability.
         </p>
       </div>

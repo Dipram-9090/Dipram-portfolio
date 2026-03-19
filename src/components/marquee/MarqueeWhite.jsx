@@ -47,11 +47,11 @@ const MarqueeWhite = () => {
       <div ref={trackRef} className="flex w-max">
         {repeatedItems.map((label, i) => (
           <div key={i} className="flex items-center gap-4 py-2 shrink-0 mx-2">
-            <p className="text-[#5043FA] text-[1.5rem] md:text-[2rem] lg:text-[2rem] font-bebas uppercase text-nowrap mt-1.5">
+            <p className="text-[#5043FA] text-[1rem] md:text-[1.5rem] lg:text-[2rem] font-bebas uppercase text-nowrap mt-0.5 md:mt-1 lg:mt-1.5">
               {label}
             </p>
             <div className="text-[#5043FA]">
-              <LogoIcon color="#5043FA" />
+              <LogoIcon color="#5043FA" className="w-5 md:w-8 lg:w-12" />
             </div>
           </div>
         ))}

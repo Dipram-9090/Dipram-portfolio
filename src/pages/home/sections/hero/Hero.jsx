@@ -97,7 +97,7 @@ const Hero = () => {
         opacity: 1,
         scale: 1, // Snap to full size
         duration: 0.8,
-        ease: "back.out(1.7)", // The tactile "pop" effect
+        ease: "power2.inOut", // The tactile "pop" effect
         pointerEvents: "auto",
       },
       "-=0.6"
@@ -182,7 +182,7 @@ const Hero = () => {
       <div className="absolute z-15 md:z-0 lg:z-0 h-screen w-full flex justify-center pointer-events-none">
         <div
           ref={mainTextRef}
-          className="flex flex-col absolute top-[50%] md:top-[25%] lg:top-[35%] w-full max-w-[90%] md:max-w-2xl lg:max-w-[60vw] mx-4 gap-4 md:gap-5 will-change-transform"
+          className="flex flex-col absolute top-[45%] md:top-[25%] lg:top-[35%] w-full max-w-[90%] md:max-w-2xl lg:max-w-[60vw] mx-4 gap-4 md:gap-5 will-change-transform"
         >
           {/* Main Text Image */}
           <img
@@ -195,7 +195,7 @@ const Hero = () => {
           {/* Subtitles */}
           <div
             ref={titleRef}
-            className="flex md:flex-row items-start md:items-start justify-between w-full font-euclid font-medium text-base md:text-xl lg:text-[1.8vw] uppercase text-white"
+            className="flex md:flex-row items-start md:items-start justify-between w-full font-euclid font-medium text-sm md:text-xl lg:text-[1.8vw] uppercase text-white"
           >
             <p className="text-left">Creative Frontend <br /> Developer </p>
             <p className="text-right">UI/UX Designer <br /> Graphic Designer </p>
@@ -206,7 +206,7 @@ const Hero = () => {
       {/* --- Action Buttons --- */}
       <div
         ref={buttonsRef}
-        className="absolute z-10 left-1/2 -translate-x-1/2 bottom-24 md:bottom-32 lg:bottom-48 flex flex-col md:flex-row justify-center items-center gap-4 w-full px-4 will-change-transform"
+        className="absolute z-10 left-1/2 -translate-x-1/2 bottom-16 md:bottom-32 lg:bottom-48 flex flex-col md:flex-row justify-center items-center gap-4 w-full px-4 will-change-transform"
       >
         <ContactButton
           className="cursor-pointer flex items-center justify-center font-euclid font-medium 
