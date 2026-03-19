@@ -1,5 +1,7 @@
 import { useEffect } from "react";
 import { ReactLenis, useLenis } from "lenis/react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/all";
 
 import Footer from "../../components/Footer";
 import ServicesHero from "./sections/servicesHero/ServicesHero";
@@ -9,6 +11,8 @@ import Section2 from "./sections/section2/Section2";
 import Section3 from "./sections/section3/Section3";
 import Section4 from "./sections/section4/Section4";
 import { useLocation } from "react-router-dom";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const Services = () => {
   const location = useLocation();
@@ -37,34 +41,44 @@ const Services = () => {
     }, 100); // 100ms delay
   }, [location.state?.resetAnimation]);
 
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver(() => {
+      ScrollTrigger.refresh();
+    });
+    
+    resizeObserver.observe(document.body);
+
+    return () => resizeObserver.disconnect();
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen overflow-hidden">
       {/* Services hero */}
       <div className="relative w-full">
         <ServicesHero />
-        <div className="absolute translate-y-15 rotate-4 bottom-0 z-100 justify-start w-full">
+        <div className="absolute translate-y-32 -translate-x-3 rotate-4 bottom-0 z-100 w-max">
           <MarqueeBlue />
         </div>
-        <div className="absolute translate-y-9 -rotate-2 bottom-0 z-99 flex justify-end w-full ">
+        <div className="absolute translate-y-9 -translate-x-3 -rotate-2 bottom-0 z-99 w-max">
           <MarqueeWhite />
         </div>
       </div>
 
       <div className="relative w-full">
         <Section2 />
-        <div className="absolute translate-y-15 rotate-6 bottom-9 z-100 justify-start w-full">
+        <div className="absolute translate-y-32 -translate-x-3 rotate-4 bottom-0 z-100 w-max">
           <MarqueeBlue />
         </div>
-        <div className="absolute translate-y-9 -rotate-2 bottom-0 z-99 flex justify-end w-full ">
+        <div className="absolute translate-y-9 -translate-x-3 -rotate-2 bottom-0 z-99 w-max">
           <MarqueeWhite />
         </div>
       </div>
       <div className="relative w-full">
         <Section3 />
-        <div className="absolute translate-y-15 rotate-6 bottom-9 z-100 justify-start w-full">
+        <div className="absolute translate-y-32 -translate-x-3 rotate-4 bottom-0 z-100 w-max">
           <MarqueeBlue />
         </div>
-        <div className="absolute translate-y-9 -rotate-2 bottom-0 z-99 flex justify-end w-full ">
+        <div className="absolute translate-y-9 -translate-x-3 -rotate-2 bottom-0 z-99 w-max">
           <MarqueeWhite />
         </div>
       </div>

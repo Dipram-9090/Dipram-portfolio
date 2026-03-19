@@ -1,10 +1,12 @@
 import React, { useEffect, useCallback, Suspense, memo } from "react";
 import { useLocation } from "react-router-dom";
 import { useLenis } from "lenis/react";
+import { gsap } from "gsap"; // Import gsap
+import { ScrollTrigger } from "gsap/all"; // Import ScrollTrigger
 
 import Hero from "./sections/hero/Hero";
-import Marquee from "../../components/Marquee"; 
-import LogoIcon from "../../components/iconComponents/LogoIcon";
+import MarqueeBlue from "../../components/marquee/MarqueeBlue";
+import MarqueeWhite from "../../components/marquee/MarqueeWhite";
 import AboutPreview from "./sections/about/AboutPreview";
 import ServicesPreview from "./sections/servicesPreview/ServicesPreview";
 import Projects from "./sections/projects/Projects";
@@ -17,11 +19,13 @@ import LogoSectionSimpler from "./sections/logoSection/LogoSectionSimpler";
 
 // Lazy-loaded heavy sections
 const WebsitesSection = React.lazy(
-  () => import("./sections/websites/WebsitesSections")
+  () => import("./sections/websites/WebsitesSections"),
 );
 const PosterSection = React.lazy(
-  () => import("./sections/posterSection/PosterSection")
+  () => import("./sections/posterSection/PosterSection"),
 );
+
+gsap.registerPlugin(ScrollTrigger);
 
 // Stable outside component — no re-allocation on renders
 const SCROLL_SELECTORS = {
@@ -29,38 +33,14 @@ const SCROLL_SELECTORS = {
   contact: ".contact-section",
 };
 
-// Global marquee items data
-const defaultMarqueeItems = [
-  'Interactive Experiences',
-  'Design System',
-  'UI/UX',
-  'Web & App Design',
-];
-
-// ---------------------------------------------------------
-// PRE-CONFIGURED MARQUEE WRAPPERS
-// These keep the JSX incredibly clean and easy to read
-// ---------------------------------------------------------
-const BlueMarquee = () => (
-  <Marquee 
-    items={defaultMarqueeItems} bgColor="#5043FA" textColor="#ffffff" direction="left" Icon={LogoIcon} 
-  />
-);
-
-const WhiteMarquee = () => (
-  <Marquee 
-    items={defaultMarqueeItems} bgColor="#ffffff" textColor="#5043FA" direction="right" Icon={LogoIcon} 
-  />
-);
-
-// Reusable marquee pair using the wrappers
+// Reusable marquee pair to avoid duplicated JSX
 const MarqueePair = memo(() => (
   <>
-    <div className="absolute lg:translate-y-15 md:translate-y-15 translate-y-10 lg:rotate-4 md:rotate-4 rotate-9 bottom-0 z-20 justify-start w-full">
-      <BlueMarquee />
+    <div className="absolute -translate-x-2 lg:translate-y-32 md:translate-y-15 translate-y-10 lg:rotate-4 md:rotate-4 rotate-9 bottom-0 z-20 w-max">
+      <MarqueeBlue />
     </div>
-    <div className="absolute translate-y-9 lg:-rotate-2 md:-rotate-2 -rotate-4 bottom-0 z-19 flex justify-end w-full">
-      <WhiteMarquee />
+    <div className="absolute translate-y-9 -translate-x-2 lg:-rotate-2 md:-rotate-2 -rotate-4 bottom-0 z-19 w-max">
+      <MarqueeWhite />
     </div>
   </>
 ));
@@ -68,15 +48,18 @@ MarqueePair.displayName = "MarqueePair";
 
 const Home = () => {
   const location = useLocation();
-  const lenis = useLenis();
+  const lenis = useLenis((lenisInstance) => {
+    ScrollTrigger.update();
+  });
 
-  // Stable callback
+  // Stable callback — only recreated if lenis instance changes
   const scrollToSection = useCallback(
     (selector) => {
       if (!lenis) return;
       const target = document.querySelector(selector);
       if (!target) return;
 
+      // Clear navigation state immediately so a back-navigation doesn't re-trigger
       window.history.replaceState({}, document.title);
 
       const timer = setTimeout(() => {
@@ -86,7 +69,7 @@ const Home = () => {
 
       return timer;
     },
-    [lenis]
+    [lenis],
   );
 
   useEffect(() => {
@@ -95,8 +78,19 @@ const Home = () => {
     if (!selector) return;
 
     const timer = scrollToSection(selector);
+    // Cleanup: cancel the timeout if the component unmounts before 100ms
     return () => clearTimeout(timer);
   }, [location.state, scrollToSection]);
+
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver(() => {
+      ScrollTrigger.refresh();
+    });
+    
+    resizeObserver.observe(document.body);
+
+    return () => resizeObserver.disconnect();
+  }, []);
 
   ScrollBackgroundChange();
 
@@ -123,7 +117,7 @@ const Home = () => {
       <div className="js-color-stop" data-background-color="rgb(255,255,255)">
         <Projects />
         <div className="flex justify-end w-full">
-          <WhiteMarquee />
+          <MarqueeWhite />
         </div>
       </div>
 
@@ -131,7 +125,7 @@ const Home = () => {
       <div className="w-full">
         <IndiProjectSection text="Logofolio" />
         <div className="flex justify-start w-full">
-          <BlueMarquee />
+          <MarqueeBlue />
         </div>
       </div>
 
@@ -139,7 +133,7 @@ const Home = () => {
       <div className="w-full">
         <LogoSectionSimpler />
         <div className="flex justify-end w-full">
-          <WhiteMarquee />
+          <MarqueeWhite />
         </div>
       </div>
 
@@ -147,32 +141,32 @@ const Home = () => {
       <div className="w-full">
         <IndiProjectSection text="Posters" />
         <div className="flex justify-start w-full">
-          <BlueMarquee />
+          <MarqueeBlue />
         </div>
       </div>
 
-      <Suspense fallback={<Loader fullScreen />}>
-        <div className="w-full">
+      <div className="w-full">
+        <Suspense fallback={<Loader fullScreen />}>
           <PosterSection />
-          <div className="flex justify-end w-full">
-            <WhiteMarquee />
-          </div>
+        </Suspense>
+        <div className="w-full">
+          <MarqueeWhite />
         </div>
-      </Suspense>
+      </div>
 
       {/* Websites */}
       <div className="w-full">
         <IndiProjectSection text="Websites" />
         <div className="flex justify-start w-full">
-          <BlueMarquee />
+          <MarqueeBlue />
         </div>
       </div>
 
       <Suspense fallback={<Loader fullScreen />}>
         <div className="w-full">
           <WebsitesSection />
-          <div className="w-full">
-            <WhiteMarquee />
+          <div className="flex justify-end w-full">
+            <MarqueeWhite />
           </div>
         </div>
       </Suspense>
