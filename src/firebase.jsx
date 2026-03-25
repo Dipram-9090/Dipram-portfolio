@@ -1,19 +1,15 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
-// Paste YOUR config details here
 const firebaseConfig = {
-  apiKey: "AIzaSyCbUZzVhqgzhYblRR3TrkVUBYiXOj__tQg",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: "dipram---portfolio-website.firebaseapp.com",
   projectId: "dipram---portfolio-website",
   storageBucket: "dipram---portfolio-website.firebasestorage.app",
-  messagingSenderId: "7700806753",
-  appId: "1:7700806753:web:36df19194471ed5d3d3e20",
-  measurementId: "G-3PG8X9KN56"
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-
-// Initialize Cloud Firestore and get a reference to the service
 export const db = getFirestore(app);
