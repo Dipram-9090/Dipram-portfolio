@@ -101,7 +101,7 @@ const AboutPreview = () => {
               start: isMobile ? "top 80%" : "top 70%",
               toggleActions: "play none none reverse", // OPTIMIZATION: Don't scrub simple fades. Just play them.
             },
-            // y: iconSize,
+            // y: 50,
             opacity: 0,
             ease: "power2.out",
             duration: 1,
@@ -114,7 +114,7 @@ const AboutPreview = () => {
               start: isMobile ? "top 80%" : "top 70%",
               toggleActions: "play none none reverse", // OPTIMIZATION: Don't scrub simple fades. Just play them.
             },
-            // y: iconSize,
+            // y: 50,
             opacity: 0,
             ease: "power2.out",
             duration: 1,
@@ -149,7 +149,7 @@ const AboutPreview = () => {
   return (
     <div
       ref={scrollRef}
-      className="bg-[#131313] relative z-0 flex flex-col justify-center gap-15 w-full lg:mt-30 mt-20 md:px-16 lg:px-40 px-6 lg:pb-iconSize md:py-40 py-40"
+      className="bg-[#131313] relative z-0 flex flex-col justify-center gap-15 w-full lg:mt-30 mt-20 md:px-16 lg:px-40 px-6 lg:pb-50 md:py-40 py-40"
     >
       {/* Content */}
       <div className="flex flex-col items-start justify-center gap-6  lg:items-end">
@@ -168,7 +168,7 @@ const AboutPreview = () => {
           </span>
         </h1>
 
-        <p className="scrollAnimate font-euclid text-base text-[#bfbfbf] md:text-lg w-full text-left lg:text-xl lg:text-white lg:text-right lg:w-[iconSize%] will-change-transform">
+        <p className="scrollAnimate font-euclid text-base text-[#bfbfbf] md:text-lg w-full text-left lg:text-xl lg:text-white lg:text-right lg:w-[50%] will-change-transform">
           I combine design systems, UI/UX thinking, brand-driven visuals, and
           motion-focused front-end development to craft experiences that are
           immersive, engaging, and built with long-term clarity and usability in
