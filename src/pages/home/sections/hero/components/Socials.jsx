@@ -4,6 +4,7 @@ import gsap from "gsap";
 import LinkedInIcon from "../../../../../components/iconComponents/LinkedInIcon";
 import BehanceIcon from "../../../../../components/iconComponents/BehanceIcon";
 import GitHubIcon from "../../../../../components/iconComponents/GitHubIcon";
+import ResumeIcon from "../../../../../components/iconComponents/ResumeIcon";
 
 const Socials = () => {
   // 1. Define your data here
@@ -22,6 +23,11 @@ const Socials = () => {
       name: "Behance",
       Component: BehanceIcon,
       url: "https://www.behance.net/diprambiswas9090",
+    },
+    {
+      name: "Resume",
+      Component: ResumeIcon, // Lucide icons are just components — same pattern
+      url: "/pdf/resume.pdf",
     },
   ];
 

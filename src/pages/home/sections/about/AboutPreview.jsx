@@ -5,6 +5,8 @@ import PhotoshopIcon from "./components/PhotoshopIcon";
 import ABOUTsvg from "./components/ABOUTsvg";
 import ProjectsButton from "../../../../components/ProjectsButton";
 
+import useResponsiveSize from "../../../../hooks/useResponsiveSize.jsx";
+
 import { SplitText } from "gsap/SplitText";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -27,6 +29,7 @@ import GitIcon from "../../../../components/iconComponents/GitIcon.jsx";
 import GitHubIcon from "../../../../components/iconComponents/GitHubIcon.jsx";
 import WebflowIcon from "../../../../components/iconComponents/WebflowIcon.jsx";
 import FramerIcon from "../../../../components/iconComponents/FramerIcon.jsx";
+import TSIcon from "../../../../components/iconComponents/TSicon.jsx";
 
 gsap.registerPlugin(SplitText, ScrollTrigger);
 
@@ -37,6 +40,20 @@ const AboutPreview = () => {
   const toolRef = useRef(null);
   const techStackRef = useRef(null);
   const techIconRef = useRef(null);
+
+  const breakpoint = useResponsiveSize();
+
+  const iconSize = {
+    sm: 30,
+    md: 40,
+    lg: 50,
+  }[breakpoint];
+
+  const motionIconSize = {
+    sm: 15,
+    md: 22,
+    lg: 25,
+  }[breakpoint];
 
   useGSAP(
     () => {
@@ -84,7 +101,7 @@ const AboutPreview = () => {
               start: isMobile ? "top 80%" : "top 70%",
               toggleActions: "play none none reverse", // OPTIMIZATION: Don't scrub simple fades. Just play them.
             },
-            // y: 50,
+            // y: iconSize,
             opacity: 0,
             ease: "power2.out",
             duration: 1,
@@ -97,7 +114,7 @@ const AboutPreview = () => {
               start: isMobile ? "top 80%" : "top 70%",
               toggleActions: "play none none reverse", // OPTIMIZATION: Don't scrub simple fades. Just play them.
             },
-            // y: 50,
+            // y: iconSize,
             opacity: 0,
             ease: "power2.out",
             duration: 1,
@@ -132,7 +149,7 @@ const AboutPreview = () => {
   return (
     <div
       ref={scrollRef}
-      className="bg-[#131313] relative z-0 flex flex-col justify-center gap-15 w-full lg:mt-30 mt-20 md:px-16 lg:px-40 px-6 lg:pb-50 md:py-40 py-40"
+      className="bg-[#131313] relative z-0 flex flex-col justify-center gap-15 w-full lg:mt-30 mt-20 md:px-16 lg:px-40 px-6 lg:pb-iconSize md:py-40 py-40"
     >
       {/* Content */}
       <div className="flex flex-col items-start justify-center gap-6  lg:items-end">
@@ -151,7 +168,7 @@ const AboutPreview = () => {
           </span>
         </h1>
 
-        <p className="scrollAnimate font-euclid text-base text-[#bfbfbf] md:text-lg w-full text-left lg:text-xl lg:text-white lg:text-right lg:w-[50%] will-change-transform">
+        <p className="scrollAnimate font-euclid text-base text-[#bfbfbf] md:text-lg w-full text-left lg:text-xl lg:text-white lg:text-right lg:w-[iconSize%] will-change-transform">
           I combine design systems, UI/UX thinking, brand-driven visuals, and
           motion-focused front-end development to craft experiences that are
           immersive, engaging, and built with long-term clarity and usability in
@@ -171,12 +188,12 @@ const AboutPreview = () => {
           ref={iconRef}
           className="flex flex-wrap items-center gap-4 icons lg:gap-6"
         >
-          <Figma size={50} />
-          <AdobeIllustratorIcon size={50} />
-          <CanvaIcon size={50} />
-          <PhotoshopIcon size={50} />
-          <WebflowIcon color="white" size={50} />
-          <FramerIcon color="white" size={50} />
+          <Figma size={iconSize} />
+          <AdobeIllustratorIcon size={iconSize} />
+          <CanvaIcon size={iconSize} />
+          <PhotoshopIcon size={iconSize} />
+          <WebflowIcon color="white" size={iconSize} />
+          <FramerIcon color="white" size={iconSize} />
         </div>
       </div>
       <div className="flex flex-col items-start justify-center gap-5 lg:items-end">
@@ -191,32 +208,33 @@ const AboutPreview = () => {
           className="flex flex-wrap icons lg:justify-end gap-y-4 gap-x-4 lg:gap-y-4 lg:gap-x-15"
         >
           <div className="flex items-center gap-4 lg:gap-6">
-            <HTML5icon color="white" size={50} />
-            <CSS3icon color="white" size={50} />
-            <JSIcon color="white" size={50} />
+            <HTML5icon color="white" size={iconSize} />
+            <CSS3icon color="white" size={iconSize} />
+            <JSIcon color="white" size={iconSize} />
+            <TSIcon color="white" size={iconSize} />
           </div>
           <div className="flex items-center gap-4 lg:gap-6">
-            <TailwindIcon color="white" size={40} />
-            <SCSSicon color="white" size={50} />
+            <TailwindIcon color="white" size={iconSize} />
+            <SCSSicon color="white" size={iconSize} />
           </div>
           <div className="flex items-center gap-4 lg:gap-6">
-            <GSAPicon color="white" size={25} />
-            <MotionIcon color="white" size={25} />
+            <GSAPicon color="white" size={motionIconSize} />
+            <MotionIcon color="white" size={motionIconSize} />
           </div>
           <div className="flex items-center gap-4 lg:gap-6">
-            <ReactIcon color="white" size={50} />
-            <NextjsIcon color="white" size={50} />
+            <ReactIcon color="white" size={iconSize} />
+            <NextjsIcon color="white" size={iconSize} />
           </div>
           <div className="flex items-center gap-4 lg:gap-6">
-            <GitIcon color="white" size={50} />
-            <GitHubIcon color="white" size={50} />
+            <GitIcon color="white" size={iconSize} />
+            <GitHubIcon color="white" size={iconSize} />
           </div>
           <div className="flex items-center gap-4 lg:gap-6">
-            <VSicon color="white" size={50} />
-            <AntiGravityIcon color="white" size={50} />
+            <VSicon color="white" size={iconSize} />
+            <AntiGravityIcon color="white" size={iconSize} />
           </div>
           <div className="flex items-center gap-4 lg:gap-6">
-            <VercelIcon size={50} />
+            <VercelIcon size={iconSize} />
           </div>
         </div>
       </div>
