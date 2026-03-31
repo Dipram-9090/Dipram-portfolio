@@ -29,7 +29,7 @@ import GitIcon from "../../../../components/iconComponents/GitIcon.jsx";
 import GitHubIcon from "../../../../components/iconComponents/GitHubIcon.jsx";
 import WebflowIcon from "../../../../components/iconComponents/WebflowIcon.jsx";
 import FramerIcon from "../../../../components/iconComponents/FramerIcon.jsx";
-import TSIcon from "../../../../components/iconComponents/TSicon.jsx";
+import TSIcon from "../../../../components/iconComponents/TSIcon.jsx";
 
 gsap.registerPlugin(SplitText, ScrollTrigger);
 
