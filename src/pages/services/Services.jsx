@@ -56,12 +56,12 @@ const Services = () => {
       {/* Services hero */}
       <div className="relative w-full">
         <ServicesHero />
-        {/* <div className="absolute -translate-x-8 lg:translate-y-35 md:translate-y-27 translate-y-25 lg:rotate-4 md:rotate-4 rotate-5 bottom-0 z-100 w-max">
+        <div className="absolute -translate-x-8 lg:translate-y-35 md:translate-y-27 translate-y-25 lg:rotate-4 md:rotate-4 rotate-5 bottom-0 z-100 w-max">
           <MarqueeBlue />
         </div>
         <div className="absolute translate-y-7 -translate-x-2 lg:-rotate-2 md:-rotate-2 -rotate-4 bottom-0 z-99 w-max">
           <MarqueeWhite />
-        </div> */}
+        </div>
       </div>
 
       <div className="relative w-full">
