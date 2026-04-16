@@ -10,21 +10,16 @@ import ProjectsButton from "../../ProjectsButton";
 import ContactButton from "../../ContactButton";
 import BehanceIcon from "../../iconComponents/BehanceIcon";
 import LinkedInIcon from "../../iconComponents/LinkedInIcon";
+import GitHubIcon from "../../iconComponents/GitHubIcon"; // ← added
 import { useLocation } from "react-router-dom";
 
 const BurgerMenu = () => {
   const [isActive, setIsActive] = useState(false);
   const lenis = useLenis();
-
-  // Detecting the current path
   const location = useLocation();
 
-  // --- Helper Function to Collapse Menu ---
-  const closeMenu = () => {
-    setIsActive(false);
-  };
+  const closeMenu = () => setIsActive(false);
 
-  // --- Scroll Locking Hook ---
   useEffect(() => {
     if (isActive) {
       lenis?.stop();
@@ -37,7 +32,6 @@ const BurgerMenu = () => {
       document.documentElement.style.overflow = "";
       document.body.style.touchAction = "";
     }
-
     return () => {
       lenis?.start();
       document.body.style.overflow = "";
@@ -46,11 +40,10 @@ const BurgerMenu = () => {
     };
   }, [isActive, lenis]);
 
-  // Styles
+  // ↓ reduced sizes
   const navLinkStyles =
-    "cursor-pointer font-euclid text-4xl md:text-5xl py-1 w-full text-center uppercase block";
+    "cursor-pointer font-euclid text-3xl md:text-4xl py-1 w-full text-center uppercase block";
 
-  // Animation Variants
   const menuVars = {
     initial: { scaleY: 0 },
     animate: {
@@ -87,7 +80,7 @@ const BurgerMenu = () => {
 
   return (
     <div>
-      {/* --- Toggle Button --- */}
+      {/* Toggle Button */}
       <div
         onClick={() => setIsActive(!isActive)}
         className="relative z-2001 w-12 h-12 rounded-full cursor-pointer group"
@@ -112,7 +105,7 @@ const BurgerMenu = () => {
         />
       </div>
 
-      {/* --- Menu Overlay --- */}
+      {/* Menu Overlay */}
       <AnimatePresence>
         {isActive && (
           <motion.div
@@ -136,7 +129,6 @@ const BurgerMenu = () => {
                   <AnimatedLink
                     to="/"
                     className="flex items-center justify-center cursor-pointer"
-                    // Applied closeMenu
                     onClick={closeMenu}
                   >
                     <Logo size={152} textColor="black" />
@@ -145,7 +137,7 @@ const BurgerMenu = () => {
               </div>
 
               {/* Navigation Links */}
-              <div className="flex flex-col w-full gap-6 md:gap-8 items-center justify-center my-8">
+              <div className="flex flex-col w-full gap-5 md:gap-6 items-center justify-center my-8">
                 {["Home", "About", "Services"].map((link) => {
                   const path = link === "Home" ? "/" : `/${link.toLowerCase()}`;
                   const isCurrentPage = location.pathname === path;
@@ -155,7 +147,6 @@ const BurgerMenu = () => {
                         <AnimatedLink
                           to={path}
                           className={`${navLinkStyles} ${isCurrentPage ? "text-[#5043FA]" : "text-black"}`}
-                          // Applied closeMenu
                           onClick={closeMenu}
                         >
                           {link}
@@ -165,13 +156,12 @@ const BurgerMenu = () => {
                   );
                 })}
 
-                {/* Projects Button Wrapper */}
+                {/* Projects Button */}
                 <div className="overflow-hidden">
                   <motion.div
                     variants={mobileLinkVars}
                     className="w-full flex justify-start"
                   >
-                    {/* PASS THE PROP HERE */}
                     <ProjectsButton
                       closeMenu={closeMenu}
                       className={navLinkStyles}
@@ -181,42 +171,68 @@ const BurgerMenu = () => {
               </div>
 
               {/* Socials & Footer */}
-              <div className="flex flex-col gap-6 shrink-0">
+              <div className="flex flex-col gap-5 shrink-0">
+                {/* Social Icons */}
                 <div className="flex items-center justify-center gap-6">
                   <div className="overflow-hidden">
                     <motion.div variants={mobileLinkVars}>
-                      {/* Applied closeMenu */}
-                      <a href="https://www.behance.net/diprambiswas9090" target="blank" onClick={closeMenu}>
-                        <BehanceIcon width={50} height={50} />
+                      <a href="https://www.behance.net/diprambiswas9090" target="_blank" rel="noreferrer" onClick={closeMenu}>
+                        <BehanceIcon width={40} height={40} />
                       </a>
                     </motion.div>
                   </div>
                   <div className="overflow-hidden">
                     <motion.div variants={mobileLinkVars}>
-                      {/* Applied closeMenu */}
-                      <a href="https://www.linkedin.com/in/dipram-biswas" target="blank" onClick={closeMenu}>
-                        <LinkedInIcon width={50} height={50} />
+                      <a href="https://www.linkedin.com/in/dipram-biswas" target="_blank" rel="noreferrer" onClick={closeMenu}>
+                        <LinkedInIcon width={40} height={40} />
+                      </a>
+                    </motion.div>
+                  </div>
+                  {/* ← GitHub icon added */}
+                  <div className="overflow-hidden">
+                    <motion.div variants={mobileLinkVars}>
+                      <a href="https://github.com/diprambiswas" target="_blank" rel="noreferrer" onClick={closeMenu}>
+                        <GitHubIcon width={40} height={40} />
                       </a>
                     </motion.div>
                   </div>
                 </div>
 
-                {/* Footer CTA */}
-                <div className="overflow-hidden">
-                  <motion.div
-                    variants={mobileLinkVars}
-                    className="w-full flex justify-center items-center"
-                  >
-                    {/* PASS THE PROP HERE */}
-                    <ContactButton
-                      closeMenu={closeMenu}
-                      className="w-full flex items-center justify-center gap-2 cursor-pointer font-euclid text-2xl md:text-4xl py-3 pl-6 pr-4 rounded-full bg-black text-white hover:bg-[#5043FA] duration-200"
+                {/* CTA Buttons */}
+                <div className="flex flex-col gap-3 items-center">
+                  {/* Resume button ← added */}
+                  <div className="overflow-hidden w-full">
+                    <motion.div
+                      variants={mobileLinkVars}
+                      className="w-full flex justify-center"
                     >
-                      {/* "cursor-pointer font-euclid text-4xl md:text-5xl py-1 w-full text-center uppercase block" */}
-                      <p className="whitespace-nowrap">LET&apos;S CONNECT</p>
-                      <Call width={35} height={35} color="white" />
-                    </ContactButton>
-                  </motion.div>
+                      <a
+                        href="/pdf/resume.pdf"
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={closeMenu}
+                        className="w-full flex items-center justify-center gap-2 cursor-pointer font-euclid text-lg md:text-xl py-3 px-6 rounded-full border-2 border-black text-black hover:border-[#5043FA] hover:text-[#5043FA] duration-200"
+                      >
+                        <p className="whitespace-nowrap uppercase">View Résumé</p>
+                      </a>
+                    </motion.div>
+                  </div>
+
+                  {/* Connect button */}
+                  <div className="overflow-hidden w-full">
+                    <motion.div
+                      variants={mobileLinkVars}
+                      className="w-full flex justify-center items-center"
+                    >
+                      <ContactButton
+                        closeMenu={closeMenu}
+                        className="w-full flex items-center justify-center gap-2 cursor-pointer font-euclid text-lg md:text-xl py-3 pl-6 pr-4 rounded-full bg-black text-white hover:bg-[#5043FA] duration-200"
+                      >
+                        <p className="whitespace-nowrap">LET&apos;S CONNECT</p>
+                        <Call width={28} height={28} color="white" />
+                      </ContactButton>
+                    </motion.div>
+                  </div>
                 </div>
               </div>
             </motion.div>
