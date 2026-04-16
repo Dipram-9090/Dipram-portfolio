@@ -44,18 +44,18 @@ const Projects = () => {
       className="projects-section relative overflow-hidden origin-bottom lg:h-screen md:h-screen h-[70vh] w-full flex items-center justify-center text-4xl font-euclid font-semibold"
     >
       <div ref={bgRef} className="absolute h-full w-full">
-        <WavyGradient direction={0} color3="#FFFFFF" />
+        <WavyGradient direction={0} color3="#FFFFFF" waveHeight={0.7} waveAmplitude={0.5} />
       </div>
 
-      <img
+      {/* <img
         ref={imgRef}
         className="absolute bottom-0 lg:h-[110vh] md:h-screen h-[70vh] object-cover md:object-cover z-20"
         src="/img/projects/main-img.webp"
         alt=""
-      />
+      /> */}
 
       <FilledPROJECTS className="absolute z-10 w-full lg:bottom-0 md:bottom-40 bottom-60" ref={filledRef} />
-      <OutlinePROJECTS className="absolute z-30 w-full lg:bottom-0 md:bottom-40 bottom-60" ref={outlineRef} />
+      {/* <OutlinePROJECTS className="absolute z-30 w-full lg:bottom-0 md:bottom-40 bottom-60" ref={outlineRef} /> */}
     </div>
   );
 };

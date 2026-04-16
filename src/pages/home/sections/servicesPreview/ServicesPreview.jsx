@@ -34,7 +34,7 @@ const ServicesPreview = () => {
     },
   ];
   return (
-    <div className="lg:h-[120vh] md:[120vh] h-screen w-full mt-50 flex flex-col gap-12">
+    <div className="lg:h-[80vh] md:[120vh] h-screen w-full mt-50 flex flex-col gap-12">
       <div className="mix-blend-difference flex flex-col">
         <h1 className="font-bebas text-white text-center text-8xl">SERVICES</h1>
         <p className="font-euclid text-white text-base text-center w-[70%] mx-auto mt-5">
