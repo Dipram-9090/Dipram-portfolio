@@ -44,7 +44,7 @@ const Projects = () => {
       className="projects-section relative overflow-hidden origin-bottom lg:h-screen md:h-screen h-[70vh] w-full flex items-center justify-center text-4xl font-euclid font-semibold"
     >
       <div ref={bgRef} className="absolute h-full w-full">
-        <WavyGradient direction={0} color3="#FFFFFF" waveHeight={0.7} waveAmplitude={0.5} />
+        <WavyGradient direction={0} color3="#FFFFFF" waveHeight={0.6} waveAmplitude={0.5} />
       </div>
 
       {/* <img
