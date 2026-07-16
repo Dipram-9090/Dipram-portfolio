@@ -191,7 +191,7 @@ const BurgerMenu = () => {
                   {/* ← GitHub icon added */}
                   <div className="overflow-hidden">
                     <motion.div variants={mobileLinkVars}>
-                      <a href="https://github.com/diprambiswas" target="_blank" rel="noreferrer" onClick={closeMenu}>
+                      <a href="https://github.com/Dipram-9090" target="_blank" rel="noreferrer" onClick={closeMenu}>
                         <GitHubIcon width={40} height={40} />
                       </a>
                     </motion.div>
